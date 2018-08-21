@@ -9,7 +9,7 @@ class Question extends Component {
             <div>
                 <p className="float-right"><Link to={`/Edit/${this.props.match.params.id}`}>Edit</Link></p>
                 <DataContext.Consumer>
-                    {(data) => <QuestionDetails question={data.filter(q => q.id == this.props.match.params.id)[0]} /> }
+                    {(data) => <QuestionDetails question={data.filter(q => q.id.toString() === this.props.match.params.id)[0]} /> }
                 </DataContext.Consumer>
             </div>
             );

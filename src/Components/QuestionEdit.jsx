@@ -8,7 +8,7 @@ class QuestionEdit extends Component {
             <div>
                 <p className="float-right">Question {this.props.match.params.id}</p>
                 <DataContext.Consumer>
-                    {(data) => <QuestionForm {...this.props} question={data.filter(q => q.id == this.props.match.params.id)[0]} />}
+                    {(data) => <QuestionForm {...this.props} question={data.filter(q => q.id.toString() === this.props.match.params.id)[0]} />}
                 </DataContext.Consumer>
             </div>
         );

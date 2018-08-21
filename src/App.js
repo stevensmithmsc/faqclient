@@ -63,7 +63,7 @@ class App extends Component {
 
     render() {
         return (
-            <Router>
+            <Router basename="/FAQ">
                 <DataContext.Provider value={this.state.questions}>
                     <div className="App">
                         <Header />
