@@ -1,16 +1,53 @@
 import React, { Component } from 'react';
-import DataContext from '../DataContext';
 import QuestionList from './QuestionList';
 
 class Category extends Component {
-    questionFilter(q) {
+    constructor(props) {
+        super(props);
+        this.state = { questions: [] };
+    }
+
+    componentDidMount() {
+        var catSearch = "";
         if (this.props.match.params.third) {
-            return q.categories[0] === this.props.match.params.cat && q.categories[1] === this.props.match.params.sub && q.categories[2] === this.props.match.params.third;
+            catSearch = this.props.match.params.cat + ',' + this.props.match.params.sub + ',' + this.props.match.params.third;
         }
-        if (this.props.match.params.sub) {
-            return q.categories[0] === this.props.match.params.cat && q.categories[1] === this.props.match.params.sub;
+        else if (this.props.match.params.sub) {
+            catSearch = this.props.match.params.cat + ',' + this.props.match.params.sub;
         }
-        return q.categories[0] === this.props.match.params.cat;
+        else {
+            catSearch = this.props.match.params.cat;
+        }
+        fetch("http://localhost:58068/api/Questions?cats=" + catSearch)
+            .then(function (response) {
+                return response.json();
+            })
+            .then(data => this.updateData(data));
+    }
+
+    componentDidUpdate(prevProps, prevState) {
+        if (prevProps.match.params !== this.props.match.params) {
+            var catSearch = "";
+            if (this.props.match.params.third) {
+                catSearch = this.props.match.params.cat + ',' + this.props.match.params.sub + ',' + this.props.match.params.third;
+            }
+            else if (this.props.match.params.sub) {
+                catSearch = this.props.match.params.cat + ',' + this.props.match.params.sub;
+            }
+            else {
+                catSearch = this.props.match.params.cat;
+            }
+            fetch("http://localhost:58068/api/Questions?cats=" + catSearch)
+                .then(function (response) {
+                    return response.json();
+                })
+                .then(data => this.updateData(data));
+        }    
+    }
+
+    updateData(data) {
+        console.log(data);
+        this.setState({ questions: data });
     }
 
     render() {
@@ -19,9 +56,8 @@ class Category extends Component {
             <div>
                 <h2>Category: {lastCat}</h2>
 
-                <DataContext.Consumer>
-                    {(data) => <QuestionList questions={data.filter((q) => this.questionFilter(q))} />}
-                </DataContext.Consumer>
+                <QuestionList questions={this.state.questions} />
+                
             </div>
             );
     }

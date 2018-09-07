@@ -41,13 +41,24 @@ class App extends Component {
                     answer: "Press the search button."
                 }
             ]
-        }
+        };
+    }
+
+    componentDidMount() {
+        fetch("http://localhost:58068/api/Questions")
+            .then(function (response) {
+                return response.json();
+            })
+            .then(data => this.updateData(data));
+    }
+
+    updateData(data) {
+        console.log(data);
+        this.setState({ questions: data });
     }
 
     handleNewQuestion(question) {
         let Questions = this.state.questions;
-        let number = Questions.length + 1;
-        question["id"] = number;
         Questions.push(question);
         this.setState({ questions: Questions });
     }
