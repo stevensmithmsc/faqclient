@@ -18,7 +18,7 @@ class Category extends Component {
         else {
             catSearch = this.props.match.params.cat;
         }
-        fetch("http://localhost:58068/api/Questions?cats=" + catSearch)
+        fetch("http://localhost:60824/api/Questions?cats=" + catSearch)
             .then(function (response) {
                 return response.json();
             })
@@ -37,7 +37,7 @@ class Category extends Component {
             else {
                 catSearch = this.props.match.params.cat;
             }
-            fetch("http://localhost:58068/api/Questions?cats=" + catSearch)
+            fetch("http://localhost:60824/api/Questions?cats=" + catSearch)
                 .then(function (response) {
                     return response.json();
                 })

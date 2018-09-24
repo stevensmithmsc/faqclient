@@ -40,12 +40,50 @@ class App extends Component {
                     keyWords: ["Search", "Stupid"],
                     answer: "Press the search button."
                 }
+            ],
+            categories: [
+                {
+                    id: 1,
+                    category: "Paris",
+                    subs: [
+                        { id: 7, category: "Demographics" },
+                        { id: 8, category: "Inpatients" },
+                        { id: 9, category: "Outpatients" },
+                        { id: 10, category: "Contacts" },
+                        { id: 11, category: "UDFs" },
+                        { id: 12, category: "Mental Health Act" }
+                    ],
+                    open: false
+                },
+                {
+                    id: 2,
+                    category: "EMIS"
+                },
+                {
+                    id: 3,
+                    category: "FAQ App",
+                    subs: [
+                        {
+                            id: 5, 
+                            category: "New Question"
+                        },
+                        {
+                            id: 6,
+                            category: "Search"
+                        }
+                    ],
+                    open: false
+                },
+                {
+                    id: 4,
+                    category: "General"
+                }
             ]
         };
     }
 
     componentDidMount() {
-        fetch("http://localhost:58068/api/Questions")
+        fetch("http://localhost:60824/api/Questions")
             .then(function (response) {
                 return response.json();
             })
@@ -72,9 +110,26 @@ class App extends Component {
         this.setState({ questions: Questions });
     }
 
+    toggleCat(id) {
+        let newcats = this.state.categories;
+        for (var cat in newcats) {
+            if (newcats[cat].id === id) {
+                newcats[cat].open = !newcats[cat].open;
+            }
+            if (newcats[cat].subs && newcats[cat].open) {
+                for (var s in newcats[cat].subs) {
+                    if (newcats[cat].subs[s].id === id) {
+                        newcats[cat].subs[s].open = !newcats[cat].subs[s].open;
+                    }
+                }
+            }
+        }
+        this.setState({ categories: newcats });
+    }
+
     render() {
         return (
-            <Router basename="/FAQ">
+            <Router basename="/">
                 <DataContext.Provider value={this.state.questions}>
                     <div className="App">
                         <Header />
@@ -82,14 +137,14 @@ class App extends Component {
                         <div className="container-fluid main">
                             <div className="row">
                                 <div className="col-md-2 col-sm-3">
-                                    <Sidebar />
+                                    <Sidebar cats={this.state.categories} toggle={this.toggleCat.bind(this)}/>
                                 </div>
-                                <div className="col-md-10 col-sm-9">
+                                <div className="col-md-10 col-sm-9 mainContent">
                                     <Switch>
                                         <Route exact path="/" component={Home} />
                                         <Route path="/Question/:id" component={Question} />
-                                        <Route path="/NewQuestion" render={(props) => <QuestionForm {...props} onSave={this.handleNewQuestion.bind(this)} question={{}} />} />
-                                        <Route path="/Edit/:id" render={(props) => <QuestionEdit {...props} onSave={this.handleUpdateQuestion.bind(this)} />} />
+                                        <Route path="/NewQuestion" render={(props) => <QuestionForm {...props} onSave={this.handleNewQuestion.bind(this)} question={{}} categories={this.state.categories} />} />
+                                        <Route path="/Edit/:id" render={(props) => <QuestionEdit {...props} onSave={this.handleUpdateQuestion.bind(this)} categories={this.state.categories} />} />
                                         <Route path="/Category/:cat/:sub/:third" component={Category} />
                                         <Route path="/Category/:cat/:sub" component={Category} />
                                         <Route path="/Category/:cat" component={Category} />

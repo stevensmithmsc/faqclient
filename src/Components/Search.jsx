@@ -9,7 +9,7 @@ class Search extends Component {
 
     componentDidMount() {
        
-        fetch("http://localhost:58068/api/Questions?keyWord=" + this.props.match.params.keyword)
+        fetch("http://localhost:60824/api/Questions?keyWord=" + this.props.match.params.keyword)
             .then(function (response) {
                 return response.json();
             })
@@ -18,7 +18,7 @@ class Search extends Component {
 
     componentDidUpdate(prevProps, prevState) {
         if (prevProps.match.params.keyword !== this.props.match.params.keyword) {
-            fetch("http://localhost:58068/api/Questions?keyWord=" + this.props.match.params.keyword)
+            fetch("http://localhost:60824/api/Questions?keyWord=" + this.props.match.params.keyword)
                 .then(function (response) {
                     return response.json();
                 })

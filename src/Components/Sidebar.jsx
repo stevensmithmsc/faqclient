@@ -1,16 +1,20 @@
-import React, { Component } from 'react';
-import { Route, NavLink } from 'react-router-dom';
+import React from 'react';
+import { withRouter } from 'react-router-dom';
+import SidebarItem from './SidebarItem';
 
-class Sidebar extends Component {
-    render() {
-        return (
-            <ul>
-                <li><NavLink to="/Category/General">General</NavLink></li>
-                <li><NavLink to="/Category/FAQ App">FAQ App</NavLink></li>
-                <Route path="/Category/FAQ App" render={() => <ul><li><NavLink to="/Category/FAQ App/New Question">New Question</NavLink></li><li><NavLink to="/Category/FAQ App/Search">Search</NavLink></li></ul>} />
+function Sidebar(props) {
+    let selected = [];
+    if (props.location.pathname.split("/")[1] === "Category") {
+        selected = props.location.pathname.split("/").slice(2);
+    }   
+    return (
+        <div>
+            <ul className="list-unstyled">
+                {props.cats.map(c => <SidebarItem key={c.id} item={c} toggle={props.toggle} path="/Category" selected={selected} />)}
             </ul>
-            );
-    }
+        </div>
+        );
 }
 
-export default Sidebar;
+
+export default withRouter(Sidebar);

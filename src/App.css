@@ -47,6 +47,30 @@ html {
     align-content: center;
 }
 
+.CategoryList {
+    border: 1px solid black;
+    border-radius: 20px;
+    padding: 5px;
+}
+
+.mainContent {
+    border-left: 1px solid black;
+}
+
+ul.sideBar > li:before {
+    content: "\25b6";
+    padding-right: 4px;
+}
+
+.clickable {
+    cursor: pointer;
+}
+
+.secList {
+    list-style: none;
+    padding-left: 1em;
+}
+
 @keyframes App-logo-spin {
   from { transform: rotate(0deg); }
   to { transform: rotate(360deg); }

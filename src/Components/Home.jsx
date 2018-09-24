@@ -3,6 +3,7 @@ import DataContext from '../DataContext';
 import QuestionList from './QuestionList';
 
 class Home extends Component {
+
     render() {
         return (
             <div>
@@ -11,7 +12,7 @@ class Home extends Component {
                     <DataContext.Consumer>
                         {(data) => <QuestionList questions={data} />}
                     </DataContext.Consumer>
-
+                <hr />
             </div>
             );
     }

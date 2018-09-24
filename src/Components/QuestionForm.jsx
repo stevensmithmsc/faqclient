@@ -1,19 +1,22 @@
 import React, { Component } from 'react';
+import { Button, Modal, ModalHeader, ModalBody } from 'reactstrap';
+import Remarkable from 'remarkable';
+import RemarkableReactRenderer from 'remarkable-react';
 
 class QuestionForm extends Component {
     constructor(props) {
         super(props);
         if (this.props.match.params.id) {
             //console.log(this.props.question);
-            this.state = { title: "Fetching Data", keyWords: [], answer: "Please Wait...", id: this.props.match.params.id, categories: []};
+            this.state = { title: "Fetching Data", keyWords: [], answer: "Please Wait...", id: this.props.match.params.id, categories: [], modal: false};
         } else {
-            this.state = { title: "", keyWords: [], answer: "", categories: []};
+            this.state = { title: "", keyWords: [], answer: "", categories: [], modal: false};
         }        
     }
 
     componentDidMount() {
         if (this.props.match.params.id) {
-            fetch("http://localhost:58068/api/Questions/" + this.props.match.params.id)
+            fetch("http://localhost:60824/api/Questions/" + this.props.match.params.id)
                 .then(function (response) {
                     return response.json();
                 })
@@ -41,7 +44,7 @@ class QuestionForm extends Component {
     handleSave() {
         if (this.state.title) {
             if (this.props.match.params.id) {
-                fetch("http://localhost:58068/api/Questions/" + this.props.match.params.id, {
+                fetch("http://localhost:60824/api/Questions/" + this.props.match.params.id, {
                     method: "PATCH",
                     headers: {
                         "Content-Type": "application/json; charset=utf-8"
@@ -51,7 +54,7 @@ class QuestionForm extends Component {
                     .then((response) => this.processEditResponce(response));
 
             } else {
-                fetch("http://localhost:58068/api/Questions/", {
+                fetch("http://localhost:60824/api/Questions/", {
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json; charset=utf-8"
@@ -117,9 +120,30 @@ class QuestionForm extends Component {
         this.setState({ categories: newCat });
     }
 
+    toggle() {
+        this.setState({
+            modal: !this.state.modal
+        });
+    }
+
+    reset() {
+        if (this.props.match.params.id) {
+            fetch("http://localhost:60824/api/Questions/" + this.props.match.params.id)
+                .then(function (response) {
+                    return response.json();
+                })
+                .then(data => this.updateQuestion(data));
+        } else {
+            this.setState({ title: "", keyWords: [], answer: "", categories: [] });
+        }
+    }
+
     render() {
-        const cat1visible = (this.state.categories[0] === "FAQ App");
+        const cat1 = this.props.categories.filter(c => c.category === this.state.categories[0])[0];
+        const cat1visible = cat1 && cat1.subs && cat1.subs.length > 0;
         const cat2visible = false;
+        const md = new Remarkable();
+        md.renderer = new RemarkableReactRenderer();
         return (
             <div>
                 <h2>{this.props.match.params.id ? "Edit" : "New"} Question</h2>
@@ -134,16 +158,14 @@ class QuestionForm extends Component {
                         <div className="col-sm-4">
                             <select type="text" className="form-control" id="cat-0" value={this.state.categories[0]} onChange={this.handleChangeSelection.bind(this)} >
                                 <option value="">Please select category</option>
-                                <option>General</option>
-                                <option>FAQ App</option>
+                                {this.props.categories.map(c => <option key={c.id}>{c.category}</option>)}
                             </select>
                         </div>
                         <div className="col-sm-4">
                             {cat1visible ? 
                             <select type="text" className="form-control" id="cat-1" value={this.state.categories[1]} onChange={this.handleChangeSelection.bind(this)} >
                                 <option value="">Please select category</option>
-                                <option>New Question</option>
-                                <option>Search</option>
+                                {cat1.subs.map(c => <option key={c.id}>{c.category}</option>)}
                             </select> : "" }
                         </div>
                         <div className="col-sm-4">
@@ -164,10 +186,19 @@ class QuestionForm extends Component {
                     <label htmlFor="answer">Answer:</label>
                     <textarea type="text" className="form-control" id="answer" rows="10" placeholder="Please enter the answer" value={this.state.answer} onChange={this.handleChange.bind(this)} />
                 </div>
-                <div className="float-right">
-                    <button className="btn btn-primary" onClick={this.handleSave.bind(this)} >Save</button>&nbsp;&nbsp;
-                    <button className="btn btn-danger">{this.props.match.params.id ? "Undo" : "Clear"}</button>
+                <div className="float-left">
+                    <Button color="primary" onClick={this.toggle.bind(this)} >Preview</Button>
                 </div>
+                <div className="float-right">
+                    <Button color="primary" onClick={this.handleSave.bind(this)} >Save</Button>&nbsp;&nbsp;
+                    <Button color="danger" onClick={this.reset.bind(this)} >{this.props.match.params.id ? "Undo" : "Clear"}</Button>
+                </div>
+                <Modal isOpen={this.state.modal} toggle={this.toggle.bind(this)} size="lg">
+                    <ModalHeader toggle={this.toggle.bind(this)}>{this.state.title}</ModalHeader>
+                    <ModalBody>
+                        {md.render(this.state.answer)}
+                    </ModalBody>
+                </Modal>
             </div>
         );
     }
