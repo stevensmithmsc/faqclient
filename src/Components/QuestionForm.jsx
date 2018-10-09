@@ -141,7 +141,8 @@ class QuestionForm extends Component {
     render() {
         const cat1 = this.props.categories.filter(c => c.category === this.state.categories[0])[0];
         const cat1visible = cat1 && cat1.subs && cat1.subs.length > 0;
-        const cat2visible = false;
+        const cat2 = cat1 && cat1.subs.filter(c => c.category === this.state.categories[1])[0];
+        const cat2visible = cat2 && cat2.subs && cat2.subs.length > 0;
         const md = new Remarkable();
         md.renderer = new RemarkableReactRenderer();
         return (
@@ -157,7 +158,7 @@ class QuestionForm extends Component {
                     <div className="row">
                         <div className="col-sm-4">
                             <select type="text" className="form-control" id="cat-0" value={this.state.categories[0]} onChange={this.handleChangeSelection.bind(this)} >
-                                <option value="">Please select category</option>
+                                <option value="">Please select system</option>
                                 {this.props.categories.map(c => <option key={c.id}>{c.category}</option>)}
                             </select>
                         </div>
@@ -171,9 +172,8 @@ class QuestionForm extends Component {
                         <div className="col-sm-4">
                             {cat2visible ?
                             <select type="text" className="form-control" id="cat-2" value={this.state.categories[2]} onChange={this.handleChangeSelection.bind(this)} >
-                                <option value="">Please select category</option>
-                                <option>Option 1</option>
-                                <option>Option 2</option>
+                                <option value="">Please select sub-category</option>
+                                {cat2.subs.map(c => <option key={c.id}>{c.category}</option>)}
                             </select> : ""}
                         </div>
                     </div>

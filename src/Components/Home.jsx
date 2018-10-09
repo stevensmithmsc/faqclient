@@ -1,18 +1,18 @@
 import React, { Component } from 'react';
-import DataContext from '../DataContext';
-import QuestionList from './QuestionList';
+
 
 class Home extends Component {
 
     render() {
         return (
             <div>
-                <h1>Hello</h1>
-
-                    <DataContext.Consumer>
-                        {(data) => <QuestionList questions={data} />}
-                    </DataContext.Consumer>
+                <h1>Welcome to ....</h1>
                 <hr />
+                    <p> This application is for .....</p>
+                <hr />
+                <p> To use this app.... </p>
+                <hr />
+                <p>Note: Searching may bring back too many answers.</p>
             </div>
             );
     }

@@ -12,6 +12,7 @@ import DataContext from './DataContext';
 import QuestionForm from './Components/QuestionForm';
 import QuestionEdit from './Components/QuestionEdit';
 import Search from './Components/Search';
+import FullList from './Components/FullList';
 
 
 class App extends Component {
@@ -22,21 +23,21 @@ class App extends Component {
                 {
                     id: 1,
                     title: "What Happens if I Ask a Stupid Question?",
-                    categories: ["General"],
+                    categories: ["CIS", "General"],
                     keyWords: ["Stupid", "Ask"],
                     answer: "If you ask a stupid question you get a stupid answer."
                 },
                 {
                     id: 2,
                     title: "How do I create a new Question?",
-                    categories: ["FAQ App", "New Question"],
+                    categories: ["CIS", "FAQ App", "New Question"],
                     keyWords: ["Question", "Ask", "Stupid"],
                     answer: "Press the new button, enter the details and press save."
                 },
                 {
                     id: 3,
                     title: "How do I search for Questions?",
-                    categories: ["FAQ App", "Search"],
+                    categories: ["CIS", "FAQ App", "Search"],
                     keyWords: ["Search", "Stupid"],
                     answer: "Press the search button."
                 }
@@ -44,7 +45,7 @@ class App extends Component {
             categories: [
                 {
                     id: 1,
-                    category: "Paris",
+                    category: "Paris Main",
                     subs: [
                         { id: 7, category: "Demographics" },
                         { id: 8, category: "Inpatients" },
@@ -60,24 +61,34 @@ class App extends Component {
                     category: "EMIS"
                 },
                 {
-                    id: 3,
-                    category: "FAQ App",
-                    subs: [
-                        {
-                            id: 5, 
-                            category: "New Question"
-                        },
-                        {
-                            id: 6,
-                            category: "Search"
-                        }
-                    ],
-                    open: false
+                    id: 13,
+                    category: "Paris Child Health"
                 },
                 {
-                    id: 4,
-                    category: "General"
+                    id: 14,
+                    category: "CIS",
+                    subs: [{
+                            id: 3,
+                            category: "FAQ App",
+                            subs: [
+                                {
+                                    id: 5,
+                                    category: "New Question"
+                                },
+                                {
+                                    id: 6,
+                                    category: "Search"
+                                }
+                            ],
+                            open: false
+                        },
+                            {
+                                id: 4,
+                                category: "General"
+                            }],
+                    open: false
                 }
+                
             ]
         };
     }
@@ -149,6 +160,7 @@ class App extends Component {
                                         <Route path="/Category/:cat/:sub" component={Category} />
                                         <Route path="/Category/:cat" component={Category} />
                                         <Route path="/Search/:keyword" component={Search} />
+                                        <Route path="/All" component={FullList} />
                                     </Switch>
                                 </div>
                             </div>

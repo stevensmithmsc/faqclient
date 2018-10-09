@@ -21,7 +21,18 @@ class SidebarItem extends Component {
                     </li>
                     <Collapse isOpen={this.props.item.open || this.props.selected.includes(this.props.item.category)}>
                         <ul className="secList">
-                            {this.props.item.subs.map(c => <SidebarItem key={c.id} item={c} toggle={this.props.toggle} path={`${this.props.path}/${this.props.item.category}`} />)}
+                            {this.props.item.subs
+                                .sort(function (a, b) {
+                                    var x = a.category.toLowerCase();
+                                    var y = b.category.toLowerCase();
+                                    if (x < y) { return -1; }
+                                    if (x > y) { return 1; }
+                                    return 0;
+                                })
+                                .map(c => <SidebarItem
+                                    key={c.id} item={c} toggle={this.props.toggle}
+                                    path={`${this.props.path}/${this.props.item.category}`}
+                                    selected={this.props.selected} />)}
                         </ul>
                     </Collapse>
                 </React.Fragment>
