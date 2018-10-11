@@ -13,6 +13,7 @@ import QuestionForm from './Components/QuestionForm';
 import QuestionEdit from './Components/QuestionEdit';
 import Search from './Components/Search';
 import FullList from './Components/FullList';
+import NewCat from './Components/NewCat';
 
 
 class App extends Component {
@@ -161,6 +162,7 @@ class App extends Component {
                                         <Route path="/Category/:cat" component={Category} />
                                         <Route path="/Search/:keyword" component={Search} />
                                         <Route path="/All" component={FullList} />
+                                        <Route path="/NewCat" component={NewCat} />
                                     </Switch>
                                 </div>
                             </div>

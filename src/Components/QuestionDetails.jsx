@@ -1,19 +1,23 @@
 import React, { Component } from 'react';
 import Remarkable from 'remarkable';
 import RemarkableReactRenderer from 'remarkable-react';
-import { Button, ButtonGroup, Input, InputGroup, InputGroupAddon, Collapse } from 'reactstrap';
+import { Button, ButtonGroup, Input, InputGroup, InputGroupAddon, Collapse, ListGroup, ListGroupItem } from 'reactstrap';
 
 class QuestionDetails extends Component {
     constructor(props) {
         super(props);
 
-        this.state = {};
+        this.state = { showFeedback: false };
 
         this.onRadioBtnClick = this.onRadioBtnClick.bind(this);
     }
 
     onRadioBtnClick(rSelected) {
         this.setState({ rSelected });
+    }
+
+    handleToggle() {
+        this.setState({ showFeedback: !this.state.showFeedback });
     }
 
     render() {
@@ -41,7 +45,41 @@ class QuestionDetails extends Component {
                             <InputGroupAddon addonType="append"><Button>Submit</Button></InputGroupAddon>
                         </InputGroup>
                     </Collapse>
+                    <p>
+                        <span onClick={this.handleToggle.bind(this)} className="clickable">{this.state.showFeedback ? "\u25bc" : "\u25b6"} Show Feedback</span>                        
+                    </p>
+                    <Collapse isOpen={this.state.showFeedback}>
+                        <div className="row">
+                            <div className="col-md-4">
+                                Yes: 0
+                            </div>
+                            <div className="col-md-4">
+                                No: 0
+                            </div>
+                            <div className="col-md-4">
+                                Score: 0
+                            </div>
+                            <div className="col-md-6">
+                                <h6>"Yes" Comments:</h6>
+                                <ListGroup>
+                                    <ListGroupItem>Comment 1</ListGroupItem>
+                                    <ListGroupItem>Comment 2</ListGroupItem>
+                                    <ListGroupItem>Comment 3</ListGroupItem>
+                                </ListGroup>
+                            </div>
+                            <div className="col-md-6">
+                                <h6>"No" Comments:</h6>
+                                <ListGroup>
+                                    <ListGroupItem>Comment 1</ListGroupItem>
+                                    <ListGroupItem>Comment 2</ListGroupItem>
+                                </ListGroup>
+                            </div>
+                        </div>
+                    </Collapse>
                 </div>
+                <p className="authors">
+                    Original Author: Person1, Last Editor: Person2
+                </p>
             </div>
         );
     }

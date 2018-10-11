@@ -83,8 +83,25 @@ ul.sideBar > li:before {
     margin-top: 20px;
 }
 
+.authors {
+    font-style: italic;
+}
+
 .paris {
     background-color: aquamarine;
+}
+
+.childHealth {
+    background-color: powderblue;
+}
+
+.emis {
+    background-color: red;
+    color: white;
+}
+
+.cis {
+    background-color: mintcream;
 }
 
 @keyframes App-logo-spin {

@@ -1,6 +1,7 @@
 import React from 'react';
 import { withRouter } from 'react-router-dom';
 import { NavLink } from 'react-router-dom';
+import Helmet from 'react-helmet';
 import SidebarItem from './SidebarItem';
 
 function Sidebar(props) {
@@ -22,7 +23,16 @@ function Sidebar(props) {
                     .map(c => <SidebarItem key={c.id} item={c} toggle={props.toggle} path="/Category" selected={selected} />)}
             </ul>
             <br />
-            <NavLink to="" >New Category</NavLink>
+            <NavLink to="/NewCat" className="btn btn-primary">New Category</NavLink>
+            {selected[0] === "Paris Main" ? <Helmet>
+                <body className="paris" />
+            </Helmet> : selected[0] === "Paris Child Health" ? <Helmet>
+                <body className="childHealth" />
+                </Helmet> : selected[0] === "EMIS" ? <Helmet>
+                    <body className="emis" />
+                    </Helmet> : selected[0] === "CIS" ? <Helmet>
+                        <body className="cis" />
+                    </Helmet> : "" }
         </div>
         );
 }
