@@ -24,7 +24,7 @@ class Header extends Component {
                 {process.env.NODE_ENV !== 'production' ? <p className="float-right">{process.env.NODE_ENV}</p> : ''}
                 <h1 className="App-title">Frequently Asked Questions</h1>
                 {showSearchBtn ? <button className="btn btn-outline-light btn-lg float-left" onClick={() => this.setState({ showSearch: !(this.state.showSearch) })}>Search</button> : ""}
-                <NavLink to="/NewQuestion" className="btn btn-outline-light btn-lg float-right">New</NavLink>
+                {this.props.canAddQuestion ? <NavLink to="/NewQuestion" className="btn btn-outline-light btn-lg float-right">New</NavLink> : ""}
                 {this.state.showSearch ? 
                 <div className="card text-white bg-transparent border-light searchCard mx-auto" >
                         <InputGroup>

@@ -14,8 +14,8 @@ function Sidebar(props) {
             <ul className="list-unstyled">
                 {props.cats
                     .sort(function (a, b) {
-                        var x = a.category.toLowerCase();
-                        var y = b.category.toLowerCase();
+                        var x = a.categoryName.toLowerCase();
+                        var y = b.categoryName.toLowerCase();
                         if (x < y) { return -1; }
                         if (x > y) { return 1; }
                         return 0;
@@ -23,7 +23,7 @@ function Sidebar(props) {
                     .map(c => <SidebarItem key={c.id} item={c} toggle={props.toggle} path="/Category" selected={selected} />)}
             </ul>
             <br />
-            <NavLink to="/NewCat" className="btn btn-primary">New Category</NavLink>
+            {props.canAdd ? <NavLink to="/NewCat" className="btn btn-primary">New Category</NavLink> : ""}
             {selected[0] === "Paris Main" ? <Helmet>
                 <body className="paris" />
             </Helmet> : selected[0] === "Paris Child Health" ? <Helmet>

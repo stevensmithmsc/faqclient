@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
-import { Button } from 'reactstrap';
 
 class QuestionList extends Component {
     render() {
@@ -8,7 +7,6 @@ class QuestionList extends Component {
             return (
                 <div>
                     <p>No Questions Found!</p>
-                    <Button color="danger">Delete This Category</Button>
                 </div>
             );
         }

@@ -10,28 +10,28 @@ class SidebarItem extends Component {
     render() {
         if (!this.props.item.subs)
             return (
-                <li>&ndash; <NavLink to={`${this.props.path}/${this.props.item.category}`}>{this.props.item.category}</NavLink></li>
+                <li>&ndash; <NavLink to={`${this.props.path}/${this.props.item.categoryName}`}>{this.props.item.categoryName}</NavLink></li>
             );
         else
             return (
                 <React.Fragment>
                     <li>
                         <span onClick={this.handleToggle.bind(this)} className="clickable">{this.props.item.open ? "\u25bc" : "\u25b6"}</span>
-                        <NavLink to={`${this.props.path}/${this.props.item.category}`}>{this.props.item.category}</NavLink>
+                        <NavLink to={`${this.props.path}/${this.props.item.categoryName}`}>{this.props.item.categoryName}</NavLink>
                     </li>
-                    <Collapse isOpen={this.props.item.open || this.props.selected.includes(this.props.item.category)}>
+                    <Collapse isOpen={this.props.item.open || this.props.selected.includes(this.props.item.categoryName)}>
                         <ul className="secList">
                             {this.props.item.subs
                                 .sort(function (a, b) {
-                                    var x = a.category.toLowerCase();
-                                    var y = b.category.toLowerCase();
+                                    var x = a.categoryName.toLowerCase();
+                                    var y = b.categoryName.toLowerCase();
                                     if (x < y) { return -1; }
                                     if (x > y) { return 1; }
                                     return 0;
                                 })
                                 .map(c => <SidebarItem
                                     key={c.id} item={c} toggle={this.props.toggle}
-                                    path={`${this.props.path}/${this.props.item.category}`}
+                                    path={`${this.props.path}/${this.props.item.categoryName}`}
                                     selected={this.props.selected} />)}
                         </ul>
                     </Collapse>

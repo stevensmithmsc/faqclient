@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { Button } from 'reactstrap';
 import QuestionList from './QuestionList';
 
 class Category extends Component {
@@ -57,7 +58,7 @@ class Category extends Component {
                 <h2>Category: {lastCat}</h2>
 
                 <QuestionList questions={this.state.questions} />
-                
+                {this.state.questions.length === 0 && this.props.canDelete ? <Button color="danger">Delete This Category</Button> : "" }               
             </div>
             );
     }

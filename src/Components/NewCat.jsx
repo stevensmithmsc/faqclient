@@ -7,7 +7,12 @@ class NewCat extends Component {
             <div>
                 <h2>New Category</h2>
                 <hr />
-
+                <p>Parent Category: xxxxx</p>
+                <div className="form-group">
+                    <label htmlFor="newCat">New Category:</label>
+                    <input type="text" className="form-control" id="newCat" placeholder="Please enter the category name." />
+                </div> 
+                <Button>Save</Button>
 
             </div>
             );       

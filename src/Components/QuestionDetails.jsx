@@ -45,41 +45,46 @@ class QuestionDetails extends Component {
                             <InputGroupAddon addonType="append"><Button>Submit</Button></InputGroupAddon>
                         </InputGroup>
                     </Collapse>
-                    <p>
-                        <span onClick={this.handleToggle.bind(this)} className="clickable">{this.state.showFeedback ? "\u25bc" : "\u25b6"} Show Feedback</span>                        
-                    </p>
-                    <Collapse isOpen={this.state.showFeedback}>
-                        <div className="row">
-                            <div className="col-md-4">
-                                Yes: 0
+                    {this.props.canEdit ? 
+                        <div>
+                        <p>
+                            <span onClick={this.handleToggle.bind(this)} className="clickable">{this.state.showFeedback ? "\u25bc" : "\u25b6"} Show Feedback</span>                        
+                        </p>
+                        <Collapse isOpen={this.state.showFeedback}>
+                            <div className="row">
+                                <div className="col-md-4">
+                                    Yes: 0
+                                </div>
+                                <div className="col-md-4">
+                                    No: 0
+                                </div>
+                                <div className="col-md-4">
+                                    Score: {this.props.question.score}
+                                </div>
+                                <div className="col-md-6">
+                                    <h6>"Yes" Comments:</h6>
+                                    <ListGroup>
+                                        <ListGroupItem>Comment 1</ListGroupItem>
+                                        <ListGroupItem>Comment 2</ListGroupItem>
+                                        <ListGroupItem>Comment 3</ListGroupItem>
+                                    </ListGroup>
+                                </div>
+                                <div className="col-md-6">
+                                    <h6>"No" Comments:</h6>
+                                    <ListGroup>
+                                        <ListGroupItem>Comment 1</ListGroupItem>
+                                        <ListGroupItem>Comment 2</ListGroupItem>
+                                    </ListGroup>
+                                </div>
                             </div>
-                            <div className="col-md-4">
-                                No: 0
-                            </div>
-                            <div className="col-md-4">
-                                Score: 0
-                            </div>
-                            <div className="col-md-6">
-                                <h6>"Yes" Comments:</h6>
-                                <ListGroup>
-                                    <ListGroupItem>Comment 1</ListGroupItem>
-                                    <ListGroupItem>Comment 2</ListGroupItem>
-                                    <ListGroupItem>Comment 3</ListGroupItem>
-                                </ListGroup>
-                            </div>
-                            <div className="col-md-6">
-                                <h6>"No" Comments:</h6>
-                                <ListGroup>
-                                    <ListGroupItem>Comment 1</ListGroupItem>
-                                    <ListGroupItem>Comment 2</ListGroupItem>
-                                </ListGroup>
-                            </div>
-                        </div>
-                    </Collapse>
+                            </Collapse> 
+                        </div> : ""}
                 </div>
+                {this.props.canEdit ? 
                 <p className="authors">
-                    Original Author: Person1, Last Editor: Person2
-                </p>
+                    Original Author: {this.props.question.author}
+                    {this.props.question.editor ? <span>, Last Editor: {this.props.question.editor}</span> : ""}                   
+                </p> : ""}
             </div>
         );
     }
