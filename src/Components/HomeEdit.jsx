@@ -1,12 +1,13 @@
 import React, { Component } from 'react';
 import Remarkable from 'remarkable';
 import RemarkableReactRenderer from 'remarkable-react';
+import { Button, Modal, ModalHeader, ModalBody } from 'reactstrap';
 
 class HomeEdit extends Component {
     constructor(props) {
         super(props);
 
-        this.state = { greeting: "Welcome to ...", description: "This application is for ...", directions: "To use this app....", warning: "Note: Searching may bring back too many answers." };
+        this.state = { greeting: "Welcome to ...", description: "This application is for ...", directions: "To use this app....", warning: "Note: Searching may bring back too many answers.", modal: false };
 
     }
 
@@ -29,6 +30,12 @@ class HomeEdit extends Component {
         this.setState(newObj);
     }
 
+    toggle() {
+        this.setState({
+            modal: !this.state.modal
+        });
+    }
+
     render() {
         const md = new Remarkable();
         md.renderer = new RemarkableReactRenderer();
@@ -49,17 +56,26 @@ class HomeEdit extends Component {
                     <label htmlFor="warning">Warning:</label>
                     <input type="text" className="form-control" id="warning" placeholder="Please enter the homepage warning..." value={this.state.warning} onChange={this.handleChange.bind(this)} />
                 </div>
-                <hr />
-                <hr />
 
+                <div className="float-left">
+                    <Button color="primary" onClick={this.toggle.bind(this)} >Preview</Button>
+                </div>
+                <div className="float-right">
+                    <Button color="primary" >Save</Button>&nbsp;&nbsp;
+                    <Button color="danger" >Undo</Button>
+                </div>
+                <Modal isOpen={this.state.modal} toggle={this.toggle.bind(this)} size="lg">
+                    <ModalHeader toggle={this.toggle.bind(this)}>{this.state.greeting}</ModalHeader>
+                    <ModalBody>
+                        {md.render(this.state.description)}
+                        <hr />
+                        {md.render(this.state.directions)}
+                        <hr />
+                        <p className="text-danger">{this.state.warning}</p>
+                    </ModalBody>
+                </Modal>
 
-                <h1>{this.state.greeting}</h1>
-                <hr />
-                <div>{md.render(this.state.description)}</div>
-                <hr />
-                <div>{md.render(this.state.directions)}</div>
-                <hr />
-                <p className="text-danger">{this.state.warning}</p>
+                
             </div>
         );
     }

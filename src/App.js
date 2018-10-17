@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
+import { BrowserRouter as Router, Route, Switch, NavLink } from "react-router-dom";
 import './App.css';
 import Header from './Components/Header';
 import Map from './Components/Map';
@@ -15,6 +15,7 @@ import Search from './Components/Search';
 import FullList from './Components/FullList';
 import NewCat from './Components/NewCat';
 import HomeEdit from './Components/HomeEdit';
+import People from './Components/People';
 
 
 class App extends Component {
@@ -93,8 +94,7 @@ class App extends Component {
                 
             ],
             user: {
-                name: "Unknown",
-                canEditHomePage: false
+                name: "Unknown"
             }
         };
     }
@@ -175,6 +175,7 @@ class App extends Component {
                             <div className="row">
                                 <div className="col-md-2 col-sm-3">
                                     <Sidebar cats={this.state.categories} toggle={this.toggleCat.bind(this)} canAdd={this.state.user.canAddCategory} />
+                                    {this.state.user.canDoUserAdmin ? <NavLink className="btn btn-warning float-bottom mt-1" to="/UserAdmin" >User Admin</NavLink> : ""}
                                 </div>
                                 <div className="col-md-10 col-sm-9 mainContent">
                                     <Switch>
@@ -189,7 +190,7 @@ class App extends Component {
                                         <Route path="/All" component={FullList} />
                                         <Route path="/NewCat" component={NewCat} />
                                         <Route path="/EditHome" render={() => <HomeEdit />} />
-                                        <Route path="/UserAdmin" render={() => <p>User Admin</p>} />
+                                        <Route path="/UserAdmin" render={() => <People />} />
                                         <Route render={() => <p>Not Found</p>} />
                                     </Switch>
                                 </div>
