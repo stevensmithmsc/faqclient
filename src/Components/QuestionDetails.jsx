@@ -7,17 +7,47 @@ class QuestionDetails extends Component {
     constructor(props) {
         super(props);
 
-        this.state = { showFeedback: false };
+        this.state = { showFeedback: false, score: this.props.question.score, isHelpful: this.props.question.helpful, comment: this.props.question.comment };
 
         this.onRadioBtnClick = this.onRadioBtnClick.bind(this);
     }
 
-    onRadioBtnClick(rSelected) {
-        this.setState({ rSelected });
+    componentDidMount() {
+        if (this.props.canEdit) {
+            fetch("http://localhost:60824/api/Feedback/" + this.props.question.id)
+                .then((response) => this.processResponse(response));
+        }
+        
+    }
+
+    processResponse(response) {
+        if (response.ok) {
+            response.json().then(data => this.updateFeedback(data));
+        } else {
+            this.setState({ noFeedback: true });
+            if (response.status !== 404) {
+                console.log(response);
+            }
+        }
+    }
+
+    updateFeedback(data) {
+        this.setState({ feedback: data });
+    }
+
+    onRadioBtnClick(isHelpful) {
+        const score = this.state.score - this.state.isHelpful + isHelpful;
+        this.setState({ isHelpful, score });
     }
 
     handleToggle() {
         this.setState({ showFeedback: !this.state.showFeedback });
+    }
+
+    handleChange(event) {
+        var newObj = {};
+        newObj[event.target.id] = event.target.value;
+        this.setState(newObj);
     }
 
     render() {
@@ -35,17 +65,17 @@ class QuestionDetails extends Component {
                 <div className="feedback" >
                     
                     <ButtonGroup className="float-right">
-                        <Button outline color="primary" onClick={() => this.onRadioBtnClick(1)} active={this.state.rSelected === 1}>Yes</Button>
-                        <Button outline color="primary" onClick={() => this.onRadioBtnClick(2)} active={this.state.rSelected === 2}>No</Button>
+                        <Button outline color="primary" onClick={() => this.onRadioBtnClick(1)} active={this.state.isHelpful === 1}>Yes</Button>
+                        <Button outline color="primary" onClick={() => this.onRadioBtnClick(-1)} active={this.state.isHelpful === -1}>No</Button>
                     </ButtonGroup>
                     <h4>Was this helpful?</h4>
-                    <Collapse isOpen={this.state.rSelected} >
+                    <Collapse isOpen={this.state.isHelpful!==0} >
                         <InputGroup>
-                            <Input placeholder="Please enter your comments..." />
+                            <Input id="comment" value={this.state.comment} placeholder="Please enter your comments..." onChange={this.handleChange.bind(this)} />
                             <InputGroupAddon addonType="append"><Button>Submit</Button></InputGroupAddon>
                         </InputGroup>
                     </Collapse>
-                    {this.props.canEdit ? 
+                    {this.props.canEdit && !this.state.noFeedback ? 
                         <div>
                         <p>
                             <span onClick={this.handleToggle.bind(this)} className="clickable">{this.state.showFeedback ? "\u25bc" : "\u25b6"} Show Feedback</span>                        
@@ -53,27 +83,24 @@ class QuestionDetails extends Component {
                         <Collapse isOpen={this.state.showFeedback}>
                             <div className="row">
                                 <div className="col-md-4">
-                                    Yes: 0
+                                        Yes: {this.state.feedback && this.state.feedback.yeses}
                                 </div>
                                 <div className="col-md-4">
-                                    No: 0
+                                        No: { this.state.feedback && this.state.feedback.noes}
                                 </div>
                                 <div className="col-md-4">
-                                    Score: {this.props.question.score}
+                                    Score: {this.state.score}
                                 </div>
                                 <div className="col-md-6">
                                     <h6>"Yes" Comments:</h6>
                                     <ListGroup>
-                                        <ListGroupItem>Comment 1</ListGroupItem>
-                                        <ListGroupItem>Comment 2</ListGroupItem>
-                                        <ListGroupItem>Comment 3</ListGroupItem>
+                                            {this.state.feedback && this.state.feedback.yesComments.map((c, i) => <ListGroupItem key={i}>{c}</ListGroupItem>)}
                                     </ListGroup>
                                 </div>
                                 <div className="col-md-6">
                                     <h6>"No" Comments:</h6>
                                     <ListGroup>
-                                        <ListGroupItem>Comment 1</ListGroupItem>
-                                        <ListGroupItem>Comment 2</ListGroupItem>
+                                            {this.state.feedback && this.state.feedback.noComments.map((c, i) => <ListGroupItem key={i}>{c}</ListGroupItem>)}
                                     </ListGroup>
                                 </div>
                             </div>

@@ -5,7 +5,7 @@ import { Link } from 'react-router-dom';
 class Question extends Component {
     constructor(props) {
         super(props);
-        this.state = { question: {} };
+        this.state = { question: {}, recieved: false };
     }
 
     componentDidMount() {
@@ -18,16 +18,16 @@ class Question extends Component {
 
     updateQuestion(data) {
         console.log(data);
-        this.setState({ question: data });
+        this.setState({ question: data, recieved: true });
     }
 
     render() {
         return (
             <div>
                 {this.props.canEdit ? <p className="float-right"><Link to={`/Edit/${this.props.match.params.id}`}>Edit</Link></p> : ""}
-                
-                <QuestionDetails question={this.state.question} canEdit={this.props.canEdit} />
-                
+                {this.state.recieved ?
+                    <QuestionDetails question={this.state.question} canEdit={this.props.canEdit} />
+                    : <p>Fetching data...</p>}
             </div>
             );
     }
