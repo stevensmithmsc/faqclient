@@ -7,7 +7,7 @@ class QuestionDetails extends Component {
     constructor(props) {
         super(props);
 
-        this.state = { showFeedback: false, score: this.props.question.score, isHelpful: this.props.question.helpful, comment: this.props.question.comment };
+        this.state = { showFeedback: false, score: this.props.question.score, isHelpful: this.props.question.helpful, comment: this.props.question.comment, showThanks: false };
 
         this.onRadioBtnClick = this.onRadioBtnClick.bind(this);
     }
@@ -36,8 +36,24 @@ class QuestionDetails extends Component {
     }
 
     onRadioBtnClick(isHelpful) {
+        const feedback = { id: this.props.question.id, helpful: isHelpful===1 };
+        fetch("http://localhost:60824/api/Feedback/" + this.props.question.id, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json; charset=utf-8"
+            },
+            body: JSON.stringify(feedback)
+        })
+            .then((response) => this.processFeedbackResponse(response));
         const score = this.state.score - this.state.isHelpful + isHelpful;
         this.setState({ isHelpful, score });
+    }
+
+    processFeedbackResponse(response) {
+        if (!response.ok) {
+            alert("There was a problem saving your feedback!");
+            console.log(response);
+        } 
     }
 
     handleToggle() {
@@ -48,6 +64,31 @@ class QuestionDetails extends Component {
         var newObj = {};
         newObj[event.target.id] = event.target.value;
         this.setState(newObj);
+    }
+
+    submitComment() {
+        const feedback = { id: this.props.question.id, helpful: this.state.isHelpful === 1, comment: this.state.comment };
+        fetch("http://localhost:60824/api/Feedback/" + this.props.question.id, {
+            method: "PUT",
+            headers: {
+                "Content-Type": "application/json; charset=utf-8"
+            },
+            body: JSON.stringify(feedback)
+        })
+            .then((response) => this.processCommentResponse(response));       
+    }
+
+    processCommentResponse(response) {
+        if (response.ok) {
+            this.setState({ showThanks: true });
+            if (this.props.canEdit) {
+                fetch("http://localhost:60824/api/Feedback/" + this.props.question.id)
+                    .then((response) => this.processResponse(response));
+            }
+        } else {
+            alert("There was a problem saving your feedback!");
+            console.log(response);
+        }
     }
 
     render() {
@@ -72,9 +113,10 @@ class QuestionDetails extends Component {
                     <Collapse isOpen={this.state.isHelpful!==0} >
                         <InputGroup>
                             <Input id="comment" value={this.state.comment} placeholder="Please enter your comments..." onChange={this.handleChange.bind(this)} />
-                            <InputGroupAddon addonType="append"><Button>Submit</Button></InputGroupAddon>
+                            <InputGroupAddon addonType="append"><Button onClick={() => this.submitComment()} >Submit</Button></InputGroupAddon>
                         </InputGroup>
                     </Collapse>
+                    <Collapse isOpen={this.state.showThanks} ><p>Thankyou for your feedback.</p></Collapse>
                     {this.props.canEdit && !this.state.noFeedback ? 
                         <div>
                         <p>

@@ -117,7 +117,7 @@ class People extends Component {
             <div>
                 <h2>Users</h2>
                 <hr />
-                <Button color="primary" className="float-right" onClick={this.newUser.bind(this)}>Add New User</Button>
+                {this.props.canDo ? <Button color="primary" className="float-right" onClick={this.newUser.bind(this)}>Add New User</Button> : ""}
                 <p>Anyone not listed below can only view data</p>
                 
                 <table className="table table-striped table-hover">
@@ -176,10 +176,11 @@ class People extends Component {
                             <input type="checkbox" className="form-check-input" id="selUserAdmin" checked={this.state.selUserAdmin} onChange={this.handleCheckbox.bind(this)} />
                             <label className="form-check-label" htmlFor="selUserAdmin">Can Do User Admin</label>
                         </div>
-                        <div className="float-right">
-                            <Button color="success" onClick={this.saveUser.bind(this)}>Save</Button>&nbsp;&nbsp;
-                            <Button color="danger" onClick={this.toggle.bind(this)}>Cancel</Button>
-                        </div>
+                        {this.props.canDo ?
+                            <div className="float-right">
+                                <Button color="success" onClick={this.saveUser.bind(this)}>Save</Button>&nbsp;&nbsp;
+                                <Button color="danger" onClick={this.toggle.bind(this)}>Cancel</Button>
+                            </div> : ""}
                     </ModalBody>
                 </Modal>
             </div>

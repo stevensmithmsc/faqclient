@@ -6,9 +6,15 @@ import SidebarItem from './SidebarItem';
 
 function Sidebar(props) {
     let selected = [];
-    if (props.location.pathname.split("/")[1] === "Category") {
+    let sysStyle = "";
+    if (props.location.pathname.split("/")[1] === "Category" || props.location.pathname.split("/")[1] === "NewCat") {
         selected = props.location.pathname.split("/").slice(2);
-    }   
+        const system = props.cats.find(s => s.categoryName === selected[0]);
+        if (system) {
+            sysStyle = system.style;
+        }
+    } 
+    
     return (
         <div>
             <ul className="list-unstyled">
@@ -23,16 +29,12 @@ function Sidebar(props) {
                     .map(c => <SidebarItem key={c.id} item={c} toggle={props.toggle} path="/Category" selected={selected} />)}
             </ul>
             <br />
-            {props.canAdd ? <NavLink to="/NewCat" className="btn btn-primary">New Category</NavLink> : ""}
-            {selected[0] === "Paris Main" ? <Helmet>
-                <body className="paris" />
-            </Helmet> : selected[0] === "Paris Child Health" ? <Helmet>
-                <body className="childHealth" />
-                </Helmet> : selected[0] === "EMIS" ? <Helmet>
-                    <body className="emis" />
-                    </Helmet> : selected[0] === "CIS" ? <Helmet>
-                        <body className="cis" />
-                    </Helmet> : "" }
+            {(props.canAdd && selected.length < 3)  ? <NavLink to={"/NewCat/" + selected.join("/")} className="btn btn-primary">New Category</NavLink> : ""}
+
+
+            {(sysStyle && sysStyle !== "") ? <Helmet>
+                <body className={sysStyle} />
+            </Helmet> : "" }
         </div>
         );
 }

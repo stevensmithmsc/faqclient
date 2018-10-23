@@ -46,27 +46,6 @@ class App extends Component {
                 }
             ],
             categories: [
-                //{
-                //    id: 1,
-                //    category: "Paris Main",
-                //    subs: [
-                //        { id: 7, category: "Demographics" },
-                //        { id: 8, category: "Inpatients" },
-                //        { id: 9, category: "Outpatients" },
-                //        { id: 10, category: "Contacts" },
-                //        { id: 11, category: "UDFs" },
-                //        { id: 12, category: "Mental Health Act" }
-                //    ],
-                //    open: false
-                //},
-                //{
-                //    id: 2,
-                //    category: "EMIS"
-                //},
-                //{
-                //    id: 13,
-                //    category: "Paris Child Health"
-                //},
                 {
                     id: 14,
                     categoryName: "CIS",
@@ -100,21 +79,29 @@ class App extends Component {
     }
 
     componentDidMount() {
-        fetch("http://localhost:60824/api/Questions")
-            .then(function (response) {
-                return response.json();
-            })
-            .then(data => this.updateData(data));
-        fetch("http://localhost:60824/api/Category")
-            .then(function (response) {
-                return response.json();
-            })
-            .then(data => this.updateCats(data));
         fetch("http://localhost:60824/api/User", { credentials: "include" })
             .then(function (response) {
                 return response.json();
             })
             .then(data => this.updateUser(data));
+        fetch("http://localhost:60824/api/Category")
+            .then(function (response) {
+                return response.json();
+            })
+            .then(data => this.updateCats(data));
+        fetch("http://localhost:60824/api/Questions")
+            .then(function (response) {
+                return response.json();
+            })
+            .then(data => this.updateData(data));
+    }
+
+    refreshCats() {
+        fetch("http://localhost:60824/api/Category")
+            .then(function (response) {
+                return response.json();
+            })
+            .then(data => this.updateCats(data));
     }
 
     updateData(data) {
@@ -181,16 +168,16 @@ class App extends Component {
                                     <Switch>
                                         <Route exact path="/" render={(props) => <Home {...props} canEdit={this.state.user.canEditHomePage} />} />
                                         <Route path="/Question/:id" render={(props) => <Question {...props} canEdit={this.state.user.canEditQuestion} />} />
-                                        <Route path="/NewQuestion" render={(props) => <QuestionForm {...props} onSave={this.handleNewQuestion.bind(this)} question={{}} categories={this.state.categories} />} />
-                                        <Route path="/Edit/:id" render={(props) => <QuestionEdit {...props} onSave={this.handleUpdateQuestion.bind(this)} categories={this.state.categories} />} />
-                                        <Route path="/Category/:cat/:sub/:third" render={(props) => <Category {...props} canDelete={this.state.user.canDeleteCategory} />} />
-                                        <Route path="/Category/:cat/:sub" render={(props) => <Category {...props} canDelete={this.state.user.canDeleteCategory} />} />
-                                        <Route path="/Category/:cat" render={(props) => <Category {...props} canDelete={this.state.user.canDeleteCategory} />}  />
+                                        <Route path="/NewQuestion" render={(props) => <QuestionForm {...props} onSave={this.handleNewQuestion.bind(this)} question={{}} categories={this.state.categories} canSave={this.state.user.canAddQuestion} />} />
+                                        <Route path="/Edit/:id" render={(props) => <QuestionEdit {...props} onSave={this.handleUpdateQuestion.bind(this)} categories={this.state.categories} canSave={this.state.user.canEditQuestion} />} />
+                                        <Route path="/Category/:cat/:sub/:third" render={(props) => <Category {...props} canDelete={this.state.user.canDeleteCategory} cats={this.state.categories} refresh={this.refreshCats.bind(this)} />} />} />
+                                        <Route path="/Category/:cat/:sub" render={(props) => <Category {...props} canDelete={this.state.user.canDeleteCategory} cats={this.state.categories} refresh={this.refreshCats.bind(this)} />} />} />
+                                        <Route path="/Category/:cat" render={(props) => <Category {...props} canDelete={this.state.user.canDeleteCategory} cats={this.state.categories} refresh={this.refreshCats.bind(this)} />} />}  />
                                         <Route path="/Search/:keyword" component={Search} />
                                         <Route path="/All" component={FullList} />
-                                        <Route path="/NewCat" component={NewCat} />
-                                        <Route path="/EditHome" render={() => <HomeEdit />} />
-                                        <Route path="/UserAdmin" render={() => <People />} />
+                                        <Route path="/NewCat" render={(props) => <NewCat {...props} cats={this.state.categories} refresh={this.refreshCats.bind(this)}/>} />
+                                        <Route path="/EditHome" render={(props) => <HomeEdit {...props} canEdit={this.state.user.canEditHomePage}/>} />
+                                        <Route path="/UserAdmin" render={() => <People canDo={this.state.user.canDoUserAdmin} />} />
                                         <Route render={() => <p>Not Found</p>} />
                                     </Switch>
                                 </div>

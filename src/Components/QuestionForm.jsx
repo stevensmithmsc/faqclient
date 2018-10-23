@@ -88,7 +88,7 @@ class QuestionForm extends Component {
 
     saveSuccessful() {
         this.props.onSave(this.state);
-        this.props.history.push("/");
+        this.props.history.push("/Question/" + this.state.id);
     }
 
 
@@ -189,10 +189,11 @@ class QuestionForm extends Component {
                 <div className="float-left">
                     <Button color="primary" onClick={this.toggle.bind(this)} >Preview</Button>
                 </div>
+                { this.props.canSave ? 
                 <div className="float-right">
                     <Button color="primary" onClick={this.handleSave.bind(this)} >Save</Button>&nbsp;&nbsp;
                     <Button color="danger" onClick={this.reset.bind(this)} >{this.props.match.params.id ? "Undo" : "Clear"}</Button>
-                </div>
+                </div> : "" } 
                 <Modal isOpen={this.state.modal} toggle={this.toggle.bind(this)} size="lg">
                     <ModalHeader toggle={this.toggle.bind(this)}>{this.state.title}</ModalHeader>
                     <ModalBody>

@@ -12,6 +12,10 @@ class HomeEdit extends Component {
     }
 
     componentDidMount() {
+        this.loadHomePageData();
+    }
+
+    loadHomePageData() {
         fetch("http://localhost:60824/api/Data")
             .then(function (response) {
                 return response.json();
@@ -34,6 +38,27 @@ class HomeEdit extends Component {
         this.setState({
             modal: !this.state.modal
         });
+    }
+
+    handleSave() {
+        const data = { id: this.state.id, greeting: this.state.greeting, description: this.state.description, directions: this.state.directions, warning: this.state.warning };
+        fetch("http://localhost:60824/api/Data/", {
+            method: "PUT",
+            headers: {
+                "Content-Type": "application/json; charset=utf-8"
+            },
+            body: JSON.stringify(data)
+        })
+            .then((response) => this.processResponse(response));
+    }
+
+    processResponse(response) {
+        console.log(response);
+        if (response.ok) {
+            this.props.history.push("/");
+        } else {
+            alert("There was a problem saving your changes");
+        }
     }
 
     render() {
@@ -60,10 +85,11 @@ class HomeEdit extends Component {
                 <div className="float-left">
                     <Button color="primary" onClick={this.toggle.bind(this)} >Preview</Button>
                 </div>
+                {this.props.canEdit? 
                 <div className="float-right">
-                    <Button color="primary" >Save</Button>&nbsp;&nbsp;
-                    <Button color="danger" >Undo</Button>
-                </div>
+                    <Button color="primary" onClick={() => this.handleSave()} >Save</Button>&nbsp;&nbsp;
+                    <Button color="danger" onClick={() => this.loadHomePageData()}>Undo</Button>
+                </div> : "" }
                 <Modal isOpen={this.state.modal} toggle={this.toggle.bind(this)} size="lg">
                     <ModalHeader toggle={this.toggle.bind(this)}>{this.state.greeting}</ModalHeader>
                     <ModalBody>
