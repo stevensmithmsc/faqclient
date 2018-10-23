@@ -16,7 +16,7 @@ class QuestionForm extends Component {
 
     componentDidMount() {
         if (this.props.match.params.id) {
-            fetch("http://localhost:60824/api/Questions/" + this.props.match.params.id)
+            fetch("http://localhost:60824/api/Questions/" + this.props.match.params.id, { credentials: "include" })
                 .then(function (response) {
                     return response.json();
                 })
@@ -49,6 +49,7 @@ class QuestionForm extends Component {
                     headers: {
                         "Content-Type": "application/json; charset=utf-8"
                     },
+                    credentials: "include",
                     body: JSON.stringify(this.state)
                 })
                     .then((response) => this.processEditResponce(response));
@@ -59,6 +60,7 @@ class QuestionForm extends Component {
                     headers: {
                         "Content-Type": "application/json; charset=utf-8"
                     },
+                    credentials: "include",
                     body: JSON.stringify(this.state)
                 })
                     .then((response) => this.processNewResponce(response));
@@ -128,7 +130,7 @@ class QuestionForm extends Component {
 
     reset() {
         if (this.props.match.params.id) {
-            fetch("http://localhost:60824/api/Questions/" + this.props.match.params.id)
+            fetch("http://localhost:60824/api/Questions/" + this.props.match.params.id, { credentials: "include" })
                 .then(function (response) {
                     return response.json();
                 })

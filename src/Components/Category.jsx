@@ -75,7 +75,8 @@ class Category extends Component {
         if (confirm(`Are you sure you want to delete ${catType}: ${lastCat}?`)) {
             console.log("Delete", categoryId);
             fetch("http://localhost:60824/api/Category/" + categoryId, {
-                method: "DELETE"
+                method: "DELETE",
+                credentials: "include"
             }).then((response) => this.processDelete(response));
         }
     }

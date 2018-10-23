@@ -14,7 +14,7 @@ class People extends Component {
     }
 
     componentDidMount() {
-        fetch("http://localhost:60824/api/People")
+        fetch("http://localhost:60824/api/People", { credentials: "include" })
             .then(function (response) {
                 return response.json();
             })
@@ -71,6 +71,7 @@ class People extends Component {
                 headers: {
                     "Content-Type": "application/json; charset=utf-8"
                 },
+                credentials: "include",
                 body: JSON.stringify(newPerson)
             })
                 .then((responce) => this.processNewResponce(responce));
@@ -80,6 +81,7 @@ class People extends Component {
                 headers: {
                     "Content-Type": "application/json; charset=utf-8"
                 },
+                credentials: "include",
                 body: JSON.stringify(newPerson)
             })
                 .then((responce) => this.processUpdateResponce(responce, newPerson));

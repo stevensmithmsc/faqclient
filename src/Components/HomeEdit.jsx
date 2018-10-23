@@ -47,6 +47,7 @@ class HomeEdit extends Component {
             headers: {
                 "Content-Type": "application/json; charset=utf-8"
             },
+            credentials: "include",
             body: JSON.stringify(data)
         })
             .then((response) => this.processResponse(response));

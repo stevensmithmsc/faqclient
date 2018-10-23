@@ -14,7 +14,7 @@ class QuestionDetails extends Component {
 
     componentDidMount() {
         if (this.props.canEdit) {
-            fetch("http://localhost:60824/api/Feedback/" + this.props.question.id)
+            fetch("http://localhost:60824/api/Feedback/" + this.props.question.id, { credentials: "include" })
                 .then((response) => this.processResponse(response));
         }
         
@@ -42,6 +42,7 @@ class QuestionDetails extends Component {
             headers: {
                 "Content-Type": "application/json; charset=utf-8"
             },
+            credentials: "include",
             body: JSON.stringify(feedback)
         })
             .then((response) => this.processFeedbackResponse(response));
@@ -73,6 +74,7 @@ class QuestionDetails extends Component {
             headers: {
                 "Content-Type": "application/json; charset=utf-8"
             },
+            credentials: "include",
             body: JSON.stringify(feedback)
         })
             .then((response) => this.processCommentResponse(response));       
@@ -82,7 +84,7 @@ class QuestionDetails extends Component {
         if (response.ok) {
             this.setState({ showThanks: true });
             if (this.props.canEdit) {
-                fetch("http://localhost:60824/api/Feedback/" + this.props.question.id)
+                fetch("http://localhost:60824/api/Feedback/" + this.props.question.id, { credentials: "include" })
                     .then((response) => this.processResponse(response));
             }
         } else {

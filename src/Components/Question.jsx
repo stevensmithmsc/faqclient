@@ -9,7 +9,7 @@ class Question extends Component {
     }
 
     componentDidMount() {
-        fetch("http://localhost:60824/api/Questions/" + this.props.match.params.id)
+        fetch("http://localhost:60824/api/Questions/" + this.props.match.params.id, { credentials: "include" })
             .then(function (response) {
                 return response.json();
             })
