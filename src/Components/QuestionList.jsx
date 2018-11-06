@@ -4,7 +4,11 @@ import { Link } from 'react-router-dom';
 class QuestionList extends Component {
     render() {
         if (this.props.questions.length === 0) {
-            return <p>No Questions Found!</p>;
+            return (
+                <div>
+                    <p>No Questions Found!</p>
+                </div>
+            );
         }
         return (
             <ul>

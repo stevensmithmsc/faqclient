@@ -5,11 +5,11 @@ import { Link } from 'react-router-dom';
 class Question extends Component {
     constructor(props) {
         super(props);
-        this.state = { question: {} };
+        this.state = { question: {}, recieved: false };
     }
 
     componentDidMount() {
-        fetch("http://localhost:60824/api/Questions/" + this.props.match.params.id)
+        fetch("http://localhost:60824/api/Questions/" + this.props.match.params.id, { credentials: "include" })
             .then(function (response) {
                 return response.json();
             })
@@ -18,16 +18,16 @@ class Question extends Component {
 
     updateQuestion(data) {
         console.log(data);
-        this.setState({ question: data });
+        this.setState({ question: data, recieved: true });
     }
 
     render() {
         return (
             <div>
-                <p className="float-right"><Link to={`/Edit/${this.props.match.params.id}`}>Edit</Link></p>
-                
-                <QuestionDetails question={this.state.question} />
-                
+                {this.props.canEdit ? <p className="float-right"><Link to={`/Edit/${this.props.match.params.id}`}>Edit</Link></p> : ""}
+                {this.state.recieved ?
+                    <QuestionDetails question={this.state.question} canEdit={this.props.canEdit} />
+                    : <p>Fetching data...</p>}
             </div>
             );
     }
