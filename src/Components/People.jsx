@@ -1,5 +1,9 @@
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
+import { bindActionCreators } from "redux";
 import { Button, Modal, ModalHeader, ModalBody } from 'reactstrap';
+import { add_user, update_user, get_users } from '../actions';
+import pacman from '../Images/pacman.gif';
 
 class People extends Component {
     constructor(props) {
@@ -14,11 +18,12 @@ class People extends Component {
     }
 
     componentDidMount() {
-        fetch("http://localhost:60824/api/People", { credentials: "include" })
-            .then(function (response) {
-                return response.json();
-            })
-            .then(data => this.updateData(data));
+        //fetch("http://localhost:60824/api/People", { credentials: "include" })
+        //    .then(function (response) {
+        //        return response.json();
+        //    })
+        //    .then(data => this.updateData(data));
+        this.props.get_users();
     }
 
     updateData(data) {
@@ -26,7 +31,7 @@ class People extends Component {
     }
 
     showDetails(id) {
-        const selected = this.state.people.find(p => p.id === id);
+        const selected = this.props.users.find(p => p.id === id);
         this.setState({
             new: false, modal: true, selId: selected.id, selName: selected.name, selEMail: selected.email,
             selAddQ: selected.canAddQuestion, selEditQ: selected.canEditQuestion, selDelQ: selected.canDeleteQuestion,
@@ -66,58 +71,43 @@ class People extends Component {
             canDeleteCategory: this.state.selDelCat, canEditHomePage: this.state.selEditHome, canDoUserAdmin: this.state.selUserAdmin
         };
         if (this.state.new) {
-            fetch("http://localhost:60824/api/People/", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json; charset=utf-8"
-                },
-                credentials: "include",
-                body: JSON.stringify(newPerson)
-            })
-                .then((responce) => this.processNewResponce(responce));
+            this.props.add_user(newPerson);
         } else {
-            fetch("http://localhost:60824/api/People?id=" + newPerson.id, {
-                method: "PUT",
-                headers: {
-                    "Content-Type": "application/json; charset=utf-8"
-                },
-                credentials: "include",
-                body: JSON.stringify(newPerson)
-            })
-                .then((responce) => this.processUpdateResponce(responce, newPerson));
+            this.props.update_user(newPerson);
         }
         this.setState({ modal: false });
     }
 
-    processNewResponce(responce) {
-        if (responce.ok) {
-            responce.json().then(data => this.AddPerson(data));
-        } else {
-            console.log(responce);
-        }
-    }
+    //processNewResponce(responce) {
+    //    if (responce.ok) {
+    //        responce.json().then(data => this.AddPerson(data));
+    //    } else {
+    //        console.log(responce);
+    //    }
+    //}
 
-    processUpdateResponce(responce, newPerson) {
-        if (responce.ok) {
-            let people = this.state.people;
-            let index = people.findIndex(p => p.id === newPerson.id);
-            people[index] = newPerson;
-            this.setState({ people });
-        } else {
-            console.log(responce);
-        }
-    }
+    //processUpdateResponce(responce, newPerson) {
+    //    if (responce.ok) {
+    //        let people = this.state.people;
+    //        let index = people.findIndex(p => p.id === newPerson.id);
+    //        people[index] = newPerson;
+    //        this.setState({ people });
+    //    } else {
+    //        console.log(responce);
+    //    }
+    //}
 
-    AddPerson(data) {
-        let people = this.state.people;
-        people.push(data);
-        this.setState({ people });
-    }
+    //AddPerson(data) {
+    //    let people = this.state.people;
+    //    people.push(data);
+    //    this.setState({ people });
+    //}
 
     render() {
         return (
             <div>
-                <h2>Users</h2>
+                {this.props.loading ? <img src={pacman} className="float-right" alt="loading..." height="50" width="50" /> : "" }
+                <h2>Users</h2>                
                 <hr />
                 {this.props.canDo ? <Button color="primary" className="float-right" onClick={this.newUser.bind(this)}>Add New User</Button> : ""}
                 <p>Anyone not listed below can only view data</p>
@@ -131,7 +121,7 @@ class People extends Component {
                         </tr>
                     </thead>
                     <tbody>
-                        {this.state.people.map(p => <tr key={p.id} onClick={() => this.showDetails(p.id)}><td>{p.id}</td><td>{p.name}</td><td>{p.email}</td></tr>)}
+                        {this.props.users.map(p => <tr key={p.id} onClick={() => this.showDetails(p.id)}><td>{p.id}</td><td>{p.name}</td><td>{p.email}</td></tr>)}
                     </tbody>
                 </table>
                 <Modal isOpen={this.state.modal} toggle={this.toggle.bind(this)}>
@@ -190,4 +180,15 @@ class People extends Component {
     }
 }
 
-export default People;
+function mapStateToProps(state) {
+    const users = state.users.people;
+    console.log(users);
+    const loading = state.users.loading;
+    return { users, loading };
+}
+
+function mapDispatchToProps(dispatch) {
+    return bindActionCreators({ add_user, update_user, get_users }, dispatch);
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(People);

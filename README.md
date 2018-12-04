@@ -1,3 +1,14 @@
+# FAQ frontend
+
+This project will generate the front end code for the FAQ app.
+
+*npm start* will run the current code in development mode. (*need api running*)
+
+*npm run build* will generate a production build which can the be added to the api project. 
+
+
+---
+
 This project was bootstrapped with [Create React App](https://github.com/facebookincubator/create-react-app).
 
 Below you will find some information on how to perform common tasks.<br>
