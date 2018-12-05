@@ -182,9 +182,9 @@ class People extends Component {
 
 function mapStateToProps(state) {
     const users = state.users.people;
-    console.log(users);
     const loading = state.users.loading;
-    return { users, loading };
+    const canDo = state.currentUser.canDoUserAdmin;
+    return { users, loading, canDo };
 }
 
 function mapDispatchToProps(dispatch) {

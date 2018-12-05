@@ -9,8 +9,6 @@ export default function (state = { people: [], loading: false }, action) {
             return { people: [...state.people, action.payload], loading: false };
 
         case UPDATE_USER:
-            console.log(state);
-            console.log(action.payload);
             return { people: [...state.people.filter(u => u.id !== action.payload.id), action.payload], loading: false };
 
         case DELETE_USER:

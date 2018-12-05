@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
 import { BrowserRouter as Router, Route, Switch, NavLink } from "react-router-dom";
+import { connect } from 'react-redux';
+import { bindActionCreators } from "redux";
 import './App.css';
 import Header from './Components/Header';
 import Map from './Components/Map';
@@ -16,6 +18,7 @@ import FullList from './Components/FullList';
 import NewCat from './Components/NewCat';
 import HomeEdit from './Components/HomeEdit';
 import People from './Components/People';
+import { get_currentUser } from './actions';
 
 
 class App extends Component {
@@ -71,19 +74,17 @@ class App extends Component {
                     open: false
                 }
                 
-            ],
-            user: {
-                name: "Unknown"
-            }
+            ]
         };
     }
 
     componentDidMount() {
-        fetch("http://localhost:60824/api/User", { credentials: "include" })
-            .then(function (response) {
-                return response.json();
-            })
-            .then(data => this.updateUser(data));
+        //fetch("http://localhost:60824/api/User", { credentials: "include" })
+        //    .then(function (response) {
+        //        return response.json();
+        //    })
+        //    .then(data => this.updateUser(data));
+        this.props.get_currentUser();
         fetch("http://localhost:60824/api/Category")
             .then(function (response) {
                 return response.json();
@@ -110,14 +111,14 @@ class App extends Component {
     }
 
     updateCats(data) {
-        console.log(data);
+        //console.log(data);
         this.setState({ categories: data });
     }
 
-    updateUser(data) {
-        console.log(data);
-        this.setState({ user: data });
-    }
+    //updateUser(data) {
+    //    console.log(data);
+    //    this.setState({ user: data });
+    //}
 
     handleNewQuestion(question) {
         let Questions = this.state.questions;
@@ -156,35 +157,35 @@ class App extends Component {
             <Router basename="/">
                 <DataContext.Provider value={this.state.questions}>
                     <div className="App">
-                        <Header canAddQuestion={this.state.user.canAddQuestion}/>
+                        <Header canAddQuestion={this.props.currentUser.canAddQuestion}/>
                         <Map/>
                         <div className="container-fluid main">
                             <div className="row">
                                 <div className="col-md-2 col-sm-3">
-                                    <Sidebar cats={this.state.categories} toggle={this.toggleCat.bind(this)} canAdd={this.state.user.canAddCategory} />
-                                    {this.state.user.canDoUserAdmin ? <NavLink className="btn btn-warning float-bottom mt-1" to="/UserAdmin" >User Admin</NavLink> : ""}
+                                    <Sidebar cats={this.state.categories} toggle={this.toggleCat.bind(this)} canAdd={this.props.currentUser.canAddCategory} />
+                                    {this.props.currentUser.canDoUserAdmin ? <NavLink className="btn btn-warning float-bottom mt-1" to="/UserAdmin" >User Admin</NavLink> : ""}
                                 </div>
                                 <div className="col-md-10 col-sm-9 mainContent">
                                     <Switch>
-                                        <Route exact path="/" render={(props) => <Home {...props} canEdit={this.state.user.canEditHomePage} />} />
-                                        <Route path="/Question/:id" render={(props) => <Question {...props} canEdit={this.state.user.canEditQuestion} />} />
-                                        <Route path="/NewQuestion" render={(props) => <QuestionForm {...props} onSave={this.handleNewQuestion.bind(this)} question={{}} categories={this.state.categories} canSave={this.state.user.canAddQuestion} />} />
-                                        <Route path="/Edit/:id" render={(props) => <QuestionEdit {...props} onSave={this.handleUpdateQuestion.bind(this)} categories={this.state.categories} canSave={this.state.user.canEditQuestion} />} />
-                                        <Route path="/Category/:cat/:sub/:third" render={(props) => <Category {...props} canDelete={this.state.user.canDeleteCategory} cats={this.state.categories} refresh={this.refreshCats.bind(this)} />} />} />
-                                        <Route path="/Category/:cat/:sub" render={(props) => <Category {...props} canDelete={this.state.user.canDeleteCategory} cats={this.state.categories} refresh={this.refreshCats.bind(this)} />} />} />
-                                        <Route path="/Category/:cat" render={(props) => <Category {...props} canDelete={this.state.user.canDeleteCategory} cats={this.state.categories} refresh={this.refreshCats.bind(this)} />} />}  />
+                                        <Route exact path="/" component={Home} />
+                                        <Route path="/Question/:id" render={(props) => <Question {...props} canEdit={this.props.currentUser.canEditQuestion} />} />
+                                        <Route path="/NewQuestion" render={(props) => <QuestionForm {...props} onSave={this.handleNewQuestion.bind(this)} question={{}} categories={this.state.categories} canSave={this.props.currentUser.canAddQuestion} />} />
+                                        <Route path="/Edit/:id" render={(props) => <QuestionEdit {...props} onSave={this.handleUpdateQuestion.bind(this)} categories={this.state.categories} canSave={this.props.currentUser.canEditQuestion} />} />
+                                        <Route path="/Category/:cat/:sub/:third" render={(props) => <Category {...props} canDelete={this.props.currentUser.canDeleteCategory} cats={this.state.categories} refresh={this.refreshCats.bind(this)} />} />} />
+                                        <Route path="/Category/:cat/:sub" render={(props) => <Category {...props} canDelete={this.props.currentUser.canDeleteCategory} cats={this.state.categories} refresh={this.refreshCats.bind(this)} />} />} />
+                                        <Route path="/Category/:cat" render={(props) => <Category {...props} canDelete={this.props.currentUser.canDeleteCategory} cats={this.state.categories} refresh={this.refreshCats.bind(this)} />} />}  />
                                         <Route path="/Search/:keyword" component={Search} />
                                         <Route path="/All" component={FullList} />
                                         <Route path="/NewCat" render={(props) => <NewCat {...props} cats={this.state.categories} refresh={this.refreshCats.bind(this)}/>} />
-                                        <Route path="/EditHome" render={(props) => <HomeEdit {...props} canEdit={this.state.user.canEditHomePage}/>} />
-                                        <Route path="/UserAdmin" render={() => <People canDo={this.state.user.canDoUserAdmin} />} />
+                                        <Route path="/EditHome" component={HomeEdit} />
+                                        <Route path="/UserAdmin" component={People} />
                                         <Route render={() => <p>Not Found</p>} />
                                     </Switch>
                                 </div>
                             </div>
                         </div>
                         <br />
-                        <Footer username={this.state.user.name} />
+                        <Footer username={this.props.currentUser.name} />
                     </div>
                 </DataContext.Provider>
             </Router>
@@ -192,4 +193,13 @@ class App extends Component {
     }
 }
 
-export default App;
+function mapStateToProps(state) {
+    const currentUser = state.currentUser;
+    return { currentUser };
+}
+
+function mapDispatchToProps(dispatch) {
+    return bindActionCreators({ get_currentUser }, dispatch);
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(App);

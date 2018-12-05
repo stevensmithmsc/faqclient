@@ -1,31 +1,43 @@
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
+import { bindActionCreators } from "redux";
 import Remarkable from 'remarkable';
 import RemarkableReactRenderer from 'remarkable-react';
 import { Button, Modal, ModalHeader, ModalBody } from 'reactstrap';
+import { get_homepage, update_homepage } from '../actions';
+import pacman from '../Images/pacman.gif';
 
 class HomeEdit extends Component {
     constructor(props) {
         super(props);
 
-        this.state = { greeting: "Welcome to ...", description: "This application is for ...", directions: "To use this app....", warning: "Note: Searching may bring back too many answers.", modal: false };
+        this.state = {
+            greeting: this.props.home.greeting,
+            description: this.props.home.description,
+            directions: this.props.home.directions,
+            warning: this.props.home.warning,
+            modal: false
+        };
 
     }
 
     componentDidMount() {
-        this.loadHomePageData();
+        const now = new Date();
+
+        if (!this.props.home.fetched || now - this.props.home.fetched > 300000) {
+            this.props.get_homepage();
+        }
     }
 
-    loadHomePageData() {
-        fetch("http://localhost:60824/api/Data")
-            .then(function (response) {
-                return response.json();
-            })
-            .then(data => this.updateData(data));
-    }
-
-    updateData(data) {
-        console.log(data);
-        this.setState(data);
+    componentWillReceiveProps(nextProps) {
+        if (this.props.home.fetched !== nextProps.home.fetched) {
+            this.setState({
+                greeting: nextProps.home.greeting,
+                description: nextProps.home.description,
+                directions: nextProps.home.directions,
+                warning: nextProps.home.warning
+            });
+        }
     }
 
     handleChange(event) {
@@ -41,28 +53,21 @@ class HomeEdit extends Component {
     }
 
     handleSave() {
-        const data = { id: this.state.id, greeting: this.state.greeting, description: this.state.description, directions: this.state.directions, warning: this.state.warning };
-        fetch("http://localhost:60824/api/Data/", {
-            method: "PUT",
-            headers: {
-                "Content-Type": "application/json; charset=utf-8"
-            },
-            credentials: "include",
-            body: JSON.stringify(data)
-        })
-            .then((response) => this.processResponse(response));
-    }
-
-    processResponse(response) {
-        console.log(response);
-        if (response.ok) {
-            this.props.history.push("/");
-        } else {
-            alert("There was a problem saving your changes");
-        }
+        const data = { greeting: this.state.greeting, description: this.state.description, directions: this.state.directions, warning: this.state.warning };
+        
+        this.props.update_homepage(data);
+        this.props.history.push("/");
     }
 
     render() {
+        if (this.props.home.loading) {
+            return (
+                <div>
+                    {this.props.home.loading ? <img src={pacman} className="float-right" alt="loading..." height="50" width="50" /> : ""}
+                    <h1>Loading...</h1>
+                </div>
+                );
+        }
         const md = new Remarkable();
         md.renderer = new RemarkableReactRenderer();
         return (
@@ -108,4 +113,14 @@ class HomeEdit extends Component {
     }
 }
 
-export default HomeEdit;
+function mapStateToProps(state) {
+    const home = state.home;
+    const canEdit = state.currentUser.canEditHomePage;
+    return { home, canEdit };
+}
+
+function mapDispatchToProps(dispatch) {
+    return bindActionCreators({ get_homepage, update_homepage }, dispatch);
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(HomeEdit);
