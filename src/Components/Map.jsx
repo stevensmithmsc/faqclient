@@ -1,19 +1,23 @@
-import React, { Component } from 'react';
+import React from 'react';
+import { connect } from 'react-redux';
 import { Route, NavLink } from 'react-router-dom';
 import { Breadcrumb, BreadcrumbItem } from 'reactstrap';
 
-class Map extends Component {
-    render() {
-        return (
+function Map(props) {
+    return (
             <Breadcrumb>                
                 <BreadcrumbItem><NavLink exact to="/">Home</NavLink></BreadcrumbItem>
-                <Route path="/Category/:cat" render={(props) => <BreadcrumbItem><NavLink exact to={`/Category/${props.match.params.cat}`}>{props.match.params.cat}</NavLink></BreadcrumbItem>} />
-                <Route path="/Category/:cat/:sub" render={(props) => <BreadcrumbItem><NavLink exact to={`/Category/${props.match.params.cat}/${props.match.params.sub}`}>{props.match.params.sub}</NavLink></BreadcrumbItem>} />
-                <Route path="/Category/:cat/:sub/:third" render={(props) => <BreadcrumbItem><NavLink exact to={`/Category/${props.match.params.cat}/${props.match.params.sub}/${props.match.params.third}`}>{props.match.params.third}</NavLink></BreadcrumbItem>} />
+            {props.categories.length > 0 ? <BreadcrumbItem><NavLink exact to={`/Category/${props.categories[0]}`}>{props.categories[0]}</NavLink></BreadcrumbItem> : ""}
+            {props.categories.length > 1 ? <BreadcrumbItem><NavLink exact to={`/Category/${props.categories[0]}/${props.categories[1]}`}>{props.categories[1]}</NavLink></BreadcrumbItem> : ""}
+            {props.categories.length > 2 ? <BreadcrumbItem><NavLink exact to={`/Category/${props.categories[0]}/${props.categories[1]}/${props.categories[2]}`}>{props.categories[2]}</NavLink></BreadcrumbItem> : ""}
                 <Route path="/Search/:keyword" render={(props) => <BreadcrumbItem>Search: {props.match.params.keyword}</BreadcrumbItem>} />
             </Breadcrumb>
             );
-    }
 }
 
-export default Map;
+function mapStateToProps(state) {
+    const categories = state.categories.current;
+    return { categories };
+}
+
+export default connect(mapStateToProps)(Map);

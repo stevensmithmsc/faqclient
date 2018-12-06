@@ -4,7 +4,7 @@ import { bindActionCreators } from "redux";
 import Remarkable from 'remarkable';
 import RemarkableReactRenderer from 'remarkable-react';
 import { Link } from 'react-router-dom';
-import { get_homepage } from '../actions';
+import { get_homepage, current_cat } from '../actions';
 import pacman from '../Images/pacman.gif';
 
 class Home extends Component {
@@ -15,6 +15,7 @@ class Home extends Component {
         if (!this.props.home.fetched || now - this.props.home.fetched > 3600000) {
             this.props.get_homepage();
         } 
+        this.props.current_cat([]);
     }
 
     render() {
@@ -43,7 +44,7 @@ function mapStateToProps(state) {
 }
 
 function mapDispatchToProps(dispatch) {
-    return bindActionCreators({ get_homepage }, dispatch);
+    return bindActionCreators({ get_homepage, current_cat }, dispatch);
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(Home);

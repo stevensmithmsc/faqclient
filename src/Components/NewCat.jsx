@@ -1,5 +1,8 @@
 import React, { Component } from 'react';
 import { Button } from 'reactstrap';
+import { connect } from 'react-redux';
+import { bindActionCreators } from "redux";
+import { create_cat } from '../actions';
 
 class NewCat extends Component {
     constructor(props) {
@@ -9,7 +12,7 @@ class NewCat extends Component {
 
     handleChange(event) {
         var newObj = {};
-        newObj[event.target.id] = event.target.value;
+        newObj[event.target.id] = event.target.value.replace("/", "").replace(",", "");
         this.setState(newObj);
     }
 
@@ -25,28 +28,30 @@ class NewCat extends Component {
                 parentCategory = cat.id;
             }
         }
-        const data = { parent: parentCategory, categoryName: this.state.categoryName };
-        console.log(data);
-        fetch("http://localhost:60824/api/Category/", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json; charset=utf-8"
-            },
-            credentials: "include",
-            body: JSON.stringify(data)
-        })
-            .then((response) => this.processResponse(response));
+        //const data = { parent: parentCategory, categoryName: this.state.categoryName };
+        //console.log(data);
+        //fetch("http://localhost:60824/api/Category/", {
+        //    method: "POST",
+        //    headers: {
+        //        "Content-Type": "application/json; charset=utf-8"
+        //    },
+        //    credentials: "include",
+        //    body: JSON.stringify(data)
+        //})
+        //    .then((response) => this.processResponse(response));
+        this.props.create_cat(parentCategory, this.state.categoryName);
+        this.props.history.push("/");
     }
 
-    processResponse(response) {
-        if (response.ok) {
-            this.props.refresh();
-            this.props.history.push("/");
-        } else {
-            alert("Problem Creating Category");
-            console.log(response);
-        }
-    }
+    //processResponse(response) {
+    //    if (response.ok) {
+    //        this.props.refresh();
+    //        this.props.history.push("/");
+    //    } else {
+    //        alert("Problem Creating Category");
+    //        console.log(response);
+    //    }
+    //}
     
     
     render() {
@@ -61,7 +66,7 @@ class NewCat extends Component {
                     <label htmlFor="newCat">New Category:</label>
                     <input type="text" className="form-control" id="categoryName" placeholder="Please enter the category name." value={this.state.categoryName} onChange={this.handleChange.bind(this)}/>
                 </div> 
-                {this.state.categoryName.length > 0 ?
+                {this.props.canAdd && this.state.categoryName.length > 0 ?
                 <Button color="primary" onClick={() => this.handleCreate()} >Create Category</Button> : ""}
 
             </div>
@@ -69,4 +74,14 @@ class NewCat extends Component {
     }
 }
 
-export default NewCat;
+function mapStateToProps(state) {
+    const categories = state.categories.categories;
+    const canAdd = state.currentUser.canAddCategory;
+    return { cats: categories, canAdd };
+}
+
+function mapDispatchToProps(dispatch) {
+    return bindActionCreators({ create_cat }, dispatch);
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(NewCat);

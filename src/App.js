@@ -18,7 +18,7 @@ import FullList from './Components/FullList';
 import NewCat from './Components/NewCat';
 import HomeEdit from './Components/HomeEdit';
 import People from './Components/People';
-import { get_currentUser } from './actions';
+import { get_currentUser, get_cats } from './actions';
 
 
 class App extends Component {
@@ -47,33 +47,6 @@ class App extends Component {
                     keyWords: ["Search", "Stupid"],
                     answer: "Press the search button."
                 }
-            ],
-            categories: [
-                {
-                    id: 14,
-                    categoryName: "CIS",
-                    subs: [{
-                            id: 3,
-                            categoryName: "FAQ App",
-                            subs: [
-                                {
-                                    id: 5,
-                                    categoryName: "New Question"
-                                },
-                                {
-                                    id: 6,
-                                    categoryName: "Search"
-                                }
-                            ],
-                            open: false
-                        },
-                            {
-                                id: 4,
-                                categoryName: "General"
-                            }],
-                    open: false
-                }
-                
             ]
         };
     }
@@ -85,11 +58,12 @@ class App extends Component {
         //    })
         //    .then(data => this.updateUser(data));
         this.props.get_currentUser();
-        fetch("http://localhost:60824/api/Category")
-            .then(function (response) {
-                return response.json();
-            })
-            .then(data => this.updateCats(data));
+        //fetch("http://localhost:60824/api/Category")
+        //    .then(function (response) {
+        //        return response.json();
+        //    })
+        //    .then(data => this.updateCats(data));
+        this.props.get_cats();
         fetch("http://localhost:60824/api/Questions")
             .then(function (response) {
                 return response.json();
@@ -97,13 +71,13 @@ class App extends Component {
             .then(data => this.updateData(data));
     }
 
-    refreshCats() {
-        fetch("http://localhost:60824/api/Category")
-            .then(function (response) {
-                return response.json();
-            })
-            .then(data => this.updateCats(data));
-    }
+    //refreshCats() {
+    //    fetch("http://localhost:60824/api/Category")
+    //        .then(function (response) {
+    //            return response.json();
+    //        })
+    //        .then(data => this.updateCats(data));
+    //}
 
     updateData(data) {
         
@@ -135,22 +109,22 @@ class App extends Component {
         this.setState({ questions: Questions });
     }
 
-    toggleCat(id) {
-        let newcats = this.state.categories;
-        for (var cat in newcats) {
-            if (newcats[cat].id === id) {
-                newcats[cat].open = !newcats[cat].open;
-            }
-            if (newcats[cat].subs && newcats[cat].open) {
-                for (var s in newcats[cat].subs) {
-                    if (newcats[cat].subs[s].id === id) {
-                        newcats[cat].subs[s].open = !newcats[cat].subs[s].open;
-                    }
-                }
-            }
-        }
-        this.setState({ categories: newcats });
-    }
+    //toggleCat(id) {
+        //let newcats = this.state.categories;
+        //for (var cat in newcats) {
+        //    if (newcats[cat].id === id) {
+        //        newcats[cat].open = !newcats[cat].open;
+        //    }
+        //    if (newcats[cat].subs && newcats[cat].open) {
+        //        for (var s in newcats[cat].subs) {
+        //            if (newcats[cat].subs[s].id === id) {
+        //                newcats[cat].subs[s].open = !newcats[cat].subs[s].open;
+        //            }
+        //        }
+        //    }
+        //}
+        //this.setState({ categories: newcats });
+    //}
 
     render() {
         return (
@@ -162,21 +136,21 @@ class App extends Component {
                         <div className="container-fluid main">
                             <div className="row">
                                 <div className="col-md-2 col-sm-3">
-                                    <Sidebar cats={this.state.categories} toggle={this.toggleCat.bind(this)} canAdd={this.props.currentUser.canAddCategory} />
+                                    <Sidebar />
                                     {this.props.currentUser.canDoUserAdmin ? <NavLink className="btn btn-warning float-bottom mt-1" to="/UserAdmin" >User Admin</NavLink> : ""}
                                 </div>
                                 <div className="col-md-10 col-sm-9 mainContent">
                                     <Switch>
                                         <Route exact path="/" component={Home} />
                                         <Route path="/Question/:id" render={(props) => <Question {...props} canEdit={this.props.currentUser.canEditQuestion} />} />
-                                        <Route path="/NewQuestion" render={(props) => <QuestionForm {...props} onSave={this.handleNewQuestion.bind(this)} question={{}} categories={this.state.categories} canSave={this.props.currentUser.canAddQuestion} />} />
-                                        <Route path="/Edit/:id" render={(props) => <QuestionEdit {...props} onSave={this.handleUpdateQuestion.bind(this)} categories={this.state.categories} canSave={this.props.currentUser.canEditQuestion} />} />
-                                        <Route path="/Category/:cat/:sub/:third" render={(props) => <Category {...props} canDelete={this.props.currentUser.canDeleteCategory} cats={this.state.categories} refresh={this.refreshCats.bind(this)} />} />} />
-                                        <Route path="/Category/:cat/:sub" render={(props) => <Category {...props} canDelete={this.props.currentUser.canDeleteCategory} cats={this.state.categories} refresh={this.refreshCats.bind(this)} />} />} />
-                                        <Route path="/Category/:cat" render={(props) => <Category {...props} canDelete={this.props.currentUser.canDeleteCategory} cats={this.state.categories} refresh={this.refreshCats.bind(this)} />} />}  />
+                                        <Route path="/NewQuestion" render={(props) => <QuestionForm {...props} onSave={this.handleNewQuestion.bind(this)} question={{}} categories={this.props.categories} canSave={this.props.currentUser.canAddQuestion} />} />
+                                        <Route path="/Edit/:id" render={(props) => <QuestionEdit {...props} onSave={this.handleUpdateQuestion.bind(this)} categories={this.props.categories} canSave={this.props.currentUser.canEditQuestion} />} />
+                                        <Route path="/Category/:cat/:sub/:third" component={Category} />
+                                        <Route path="/Category/:cat/:sub" component={Category} />} />} />
+                                        <Route path="/Category/:cat" component={Category}  />
                                         <Route path="/Search/:keyword" component={Search} />
                                         <Route path="/All" component={FullList} />
-                                        <Route path="/NewCat" render={(props) => <NewCat {...props} cats={this.state.categories} refresh={this.refreshCats.bind(this)}/>} />
+                                        <Route path="/NewCat" component={NewCat} />
                                         <Route path="/EditHome" component={HomeEdit} />
                                         <Route path="/UserAdmin" component={People} />
                                         <Route render={() => <p>Not Found</p>} />
@@ -195,11 +169,12 @@ class App extends Component {
 
 function mapStateToProps(state) {
     const currentUser = state.currentUser;
-    return { currentUser };
+    const categories = state.categories.categories;
+    return { currentUser, categories };
 }
 
 function mapDispatchToProps(dispatch) {
-    return bindActionCreators({ get_currentUser }, dispatch);
+    return bindActionCreators({ get_currentUser, get_cats }, dispatch);
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(App);

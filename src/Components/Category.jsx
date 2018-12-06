@@ -1,6 +1,9 @@
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
+import { bindActionCreators } from "redux";
 import { Button } from 'reactstrap';
 import QuestionList from './QuestionList';
+import { delete_cat, current_cat } from '../actions';
 
 class Category extends Component {
     constructor(props) {
@@ -9,6 +12,18 @@ class Category extends Component {
     }
 
     componentDidMount() {
+        this.getQuestions();
+    }
+
+    componentDidUpdate(prevProps, prevState) {
+        if (prevProps.match.params.cat !== this.props.match.params.cat
+            || prevProps.match.params.sub !== this.props.match.params.sub
+            || prevProps.match.params.third !== this.props.match.params.third) {
+            this.getQuestions();
+        }    
+    }
+
+    getQuestions() {
         var catSearch = "";
         if (this.props.match.params.third) {
             catSearch = this.props.match.params.cat + ',' + this.props.match.params.sub + ',' + this.props.match.params.third;
@@ -24,30 +39,11 @@ class Category extends Component {
                 return response.json();
             })
             .then(data => this.updateData(data));
-    }
-
-    componentDidUpdate(prevProps, prevState) {
-        if (prevProps.match.params !== this.props.match.params) {
-            var catSearch = "";
-            if (this.props.match.params.third) {
-                catSearch = this.props.match.params.cat + ',' + this.props.match.params.sub + ',' + this.props.match.params.third;
-            }
-            else if (this.props.match.params.sub) {
-                catSearch = this.props.match.params.cat + ',' + this.props.match.params.sub;
-            }
-            else {
-                catSearch = this.props.match.params.cat;
-            }
-            fetch("http://localhost:60824/api/Questions?cats=" + catSearch)
-                .then(function (response) {
-                    return response.json();
-                })
-                .then(data => this.updateData(data));
-        }    
+        this.props.current_cat(catSearch.split(','));
     }
 
     updateData(data) {
-        console.log(data);
+        //console.log(data);
         this.setState({ questions: data });
     }
 
@@ -74,22 +70,24 @@ class Category extends Component {
         //eslint-disable-next-line
         if (confirm(`Are you sure you want to delete ${catType}: ${lastCat}?`)) {
             console.log("Delete", categoryId);
-            fetch("http://localhost:60824/api/Category/" + categoryId, {
-                method: "DELETE",
-                credentials: "include"
-            }).then((response) => this.processDelete(response));
+            this.props.delete_cat(categoryId);
+            //fetch("http://localhost:60824/api/Category/" + categoryId, {
+            //    method: "DELETE",
+            //    credentials: "include"
+            //}).then((response) => this.processDelete(response));
+            this.props.history.push("/");
         }
     }
 
-    processDelete(response) {
-        if (response.ok) {
-            this.props.refresh();
-            this.props.history.push("/");
-        } else {
-            alert("Problem Deleteing Category");
-            console.log(response);
-        }
-    }
+    //processDelete(response) {
+    //    if (response.ok) {
+    //        this.props.refresh();
+    //        this.props.history.push("/");
+    //    } else {
+    //        alert("Problem Deleteing Category");
+    //        console.log(response);
+    //    }
+    //}
 
     render() {
         const lastCat = this.props.match.params.third ? this.props.match.params.third : this.props.match.params.sub ? this.props.match.params.sub : this.props.match.params.cat;
@@ -105,4 +103,14 @@ class Category extends Component {
     }
 }
 
-export default Category;
+function mapStateToProps(state) {
+    const categories = state.categories.categories;
+    const canDelete = state.currentUser.canDeleteCategory;
+    return { cats: categories, canDelete };
+}
+
+function mapDispatchToProps(dispatch) {
+    return bindActionCreators({ delete_cat, current_cat }, dispatch);
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(Category);

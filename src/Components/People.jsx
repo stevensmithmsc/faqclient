@@ -10,7 +10,7 @@ class People extends Component {
         super(props);
 
         this.state = {
-            people: [], modal: false, new: false,
+            modal: false, new: false,
             selId: "", selName: "", selEMail: "", selAddQ: false, selEditQ: false, selDelQ: false,
             selAddCat: false, selDelCat: false, selEditHome: false, selUserAdmin: false
         };
@@ -26,9 +26,9 @@ class People extends Component {
         this.props.get_users();
     }
 
-    updateData(data) {
-        this.setState({ people: data });
-    }
+    //updateData(data) {
+    //    this.setState({ people: data });
+    //}
 
     showDetails(id) {
         const selected = this.props.users.find(p => p.id === id);
@@ -121,7 +121,15 @@ class People extends Component {
                         </tr>
                     </thead>
                     <tbody>
-                        {this.props.users.map(p => <tr key={p.id} onClick={() => this.showDetails(p.id)}><td>{p.id}</td><td>{p.name}</td><td>{p.email}</td></tr>)}
+                        {this.props.users
+                            .sort(function (a, b) {
+                                var x = a.id.toLowerCase();
+                                var y = b.id.toLowerCase();
+                                if (x < y) { return -1; }
+                                if (x > y) { return 1; }
+                                return 0;
+                            })
+                            .map(p => <tr key={p.id} onClick={() => this.showDetails(p.id)}><td>{p.id}</td><td>{p.name}</td><td>{p.email}</td></tr>)}
                     </tbody>
                 </table>
                 <Modal isOpen={this.state.modal} toggle={this.toggle.bind(this)}>

@@ -1,7 +1,7 @@
 
 
 //export const GET_ALL_Qs = 'get_all_qs';
-//export const GET_CATEGORY = 'get_category';
+//export const GET_CATEGORY_Qs = 'get_category_questions';
 //export const SEARCH_KEYWORD = 'search_keyword';
 //export const GET_ANSWER = 'get_answer';
 //export const UPDATE_ANSWER = 'update_answer';
@@ -15,6 +15,12 @@ export const GET_HOME_PAGE = 'get_home_page';
 export const HOME_PAGE_REQUEST = 'home_page_request';
 export const GET_CURRENT_USER = 'get_current_user';
 //export const REQUESTING_CURRENT_USER = 'requesting_current_user';
+export const REQUEST_CATEGORIES = 'category_request';
+export const GET_CATEGORIES = 'get_categories';
+export const TOGGLE_CATEGORY = 'toggle_category';
+//export const ADD_CATEGORY = 'add_categry';
+//export const DELETE_CATEGORY = 'delete_category';
+export const SET_CURRENT_CATEGORY = 'set_current_category';
 
 const api_root = "http://localhost:60824/api";
 
@@ -202,5 +208,91 @@ export function get_currentUser() {
                 dispatch(fetched_currentUser(json))
         );
 
+    };
+}
+
+function return_cats(json) {
+    return {
+        type: GET_CATEGORIES,
+        payload: json
+    };
+}
+
+function request_cats() {
+    return {
+        type: REQUEST_CATEGORIES
+    };
+}
+
+export function get_cats() {
+
+    return function (dispatch) {
+        dispatch(request_cats());
+
+        return fetch(api_root + "/Category")
+            .then(
+                response => response.json(),
+                error => console.log('An error occurred', error)
+            )
+            .then(json =>
+                dispatch(return_cats(json))
+            );
+    };
+}
+
+export function toggle_cats(id) {
+    return {
+        type: TOGGLE_CATEGORY,
+        payload: id
+    };
+}
+
+export function create_cat(parent, name) {
+    return function (dispatch) {
+        dispatch(request_cats());
+
+        const data = { parent: parent, categoryName: name };
+        return fetch(api_root + "/Category/", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json; charset=utf-8"
+            },
+            credentials: "include",
+            body: JSON.stringify(data)
+        })
+            .then(
+                response => console.log(response.json()),
+                error => console.log('An error occurred', error)
+            )
+            .then(json => {
+                console.log(json);
+                dispatch(get_cats());
+            });
+    };
+}
+
+export function delete_cat(categoryId) {
+    return function (dispatch) {
+        dispatch(request_cats());
+
+        return fetch(api_root + "/Category/" + categoryId, {
+            method: "DELETE",
+            credentials: "include"
+        })
+            .then(
+                response => console.log(response.json()),
+                error => console.log('An error occurred', error)
+            )
+            .then(json => {
+                console.log(json);
+                dispatch(get_cats());
+            });
+    };
+}
+
+export function current_cat(categories) {
+    return {
+        type: SET_CURRENT_CATEGORY,
+        payload: categories
     };
 }
