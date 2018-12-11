@@ -3,9 +3,12 @@
 //export const GET_ALL_Qs = 'get_all_qs';
 //export const GET_CATEGORY_Qs = 'get_category_questions';
 //export const SEARCH_KEYWORD = 'search_keyword';
-//export const GET_ANSWER = 'get_answer';
-//export const UPDATE_ANSWER = 'update_answer';
-//export const CREATE_QUESTION = 'create_question';
+export const GET_ANSWER = 'get_answer';
+export const UPDATE_ANSWER = 'update_answer';
+export const CREATE_QUESTION = 'create_question';
+export const FEEDBACK_USEFUL = 'set_useful_feedback';
+export const FEEDBACK_COMMENT = 'set_feedback_comment';
+export const GET_FEEDBACK = 'get_feedback';
 export const GET_USERS = 'get_users';
 export const UPDATE_USER = 'update_user';
 export const ADD_USER = 'add_user';
@@ -22,7 +25,7 @@ export const TOGGLE_CATEGORY = 'toggle_category';
 //export const DELETE_CATEGORY = 'delete_category';
 export const SET_CURRENT_CATEGORY = 'set_current_category';
 
-const api_root = "http://localhost:60824/api";
+const api_root = process.env.REACT_APP_API;
 
 //export function getAllQs() {
 
@@ -36,9 +39,25 @@ const api_root = "http://localhost:60824/api";
 
 //}
 
-//export function getAnswer(id) {
+function returnAnswer(json) {
+    return {
+        type: GET_ANSWER,
+        payload: json
+    };
+}
 
-//}
+export function getAnswer(id) {
+    return function (dispatch) {
+        return fetch(api_root + "/Questions/" + id, { credentials: "include" })
+            .then(
+                response => response.json(),
+                error => console.log('An error occurred', error)
+            )
+            .then(json =>
+                dispatch(returnAnswer(json))
+            );
+    };
+}
 
 //export function updateAnswer(id, question) {
 
@@ -47,6 +66,82 @@ const api_root = "http://localhost:60824/api";
 //export function createQuestion(question) {
 
 //}
+
+function confirmUsefulness(id, isHelpful) {
+    return {
+        type: FEEDBACK_USEFUL,
+        payload: { id, isHelpful }
+    };
+}
+
+export function feedbackUseful(id, isHelpful) {
+    return function (dispatch) {
+        const feedback = { id, helpful: isHelpful===1 };
+        fetch(api_root + "/Feedback/" + id, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json; charset=utf-8"
+            },
+            credentials: "include",
+            body: JSON.stringify(feedback)
+        })
+            .then(
+                response => console.log('Response', response.json()),
+                error => console.log('An error occurred', error)
+            )
+            .then(() =>
+                dispatch(confirmUsefulness(id, isHelpful))
+            );
+    };    
+}
+
+function confirmComment(id, isHelpful, comment) {
+    return {
+        type: FEEDBACK_COMMENT,
+        payload: { id, isHelpful, comment }
+    };
+}
+
+export function feedbackComment(id, isHelpful, comment) {
+    return function (dispatch) {
+        const feedback = { id, helpful: isHelpful === 1, comment };
+        fetch(api_root + "/Feedback/" + id, {
+            method: "PUT",
+            headers: {
+                "Content-Type": "application/json; charset=utf-8"
+            },
+            credentials: "include",
+            body: JSON.stringify(feedback)
+        })
+            .then(
+                response => console.log('Response', response.json()),
+                error => console.log('An error occurred', error)
+            )
+            .then(() =>
+                dispatch(confirmComment(id, isHelpful, comment))
+            );
+    };
+}
+
+function return_feedback(json) {
+    return {
+        type: GET_FEEDBACK,
+        payload: json
+    };
+}
+
+export function get_feedback(id) {
+    return function (dispatch) {
+        fetch(api_root + "/Feedback/" + id, { credentials: "include" })
+            .then(
+                response => response.json(),
+                error => console.log('An error occurred', error)
+            )
+            .then(json =>
+                dispatch(return_feedback(json))
+            );
+    };
+}
 
 function return_users(json) {
     return {

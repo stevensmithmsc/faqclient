@@ -84,10 +84,10 @@ class App extends Component {
         this.setState({ questions: data });
     }
 
-    updateCats(data) {
-        //console.log(data);
-        this.setState({ categories: data });
-    }
+    //updateCats(data) {
+    //    //console.log(data);
+    //    this.setState({ categories: data });
+    //}
 
     //updateUser(data) {
     //    console.log(data);
@@ -142,9 +142,9 @@ class App extends Component {
                                 <div className="col-md-10 col-sm-9 mainContent">
                                     <Switch>
                                         <Route exact path="/" component={Home} />
-                                        <Route path="/Question/:id" render={(props) => <Question {...props} canEdit={this.props.currentUser.canEditQuestion} />} />
-                                        <Route path="/NewQuestion" render={(props) => <QuestionForm {...props} onSave={this.handleNewQuestion.bind(this)} question={{}} categories={this.props.categories} canSave={this.props.currentUser.canAddQuestion} />} />
-                                        <Route path="/Edit/:id" render={(props) => <QuestionEdit {...props} onSave={this.handleUpdateQuestion.bind(this)} categories={this.props.categories} canSave={this.props.currentUser.canEditQuestion} />} />
+                                        <Route path="/Question/:id" component={Question} />
+                                        <Route path="/NewQuestion" render={(props) => <QuestionForm {...props} onSave={this.handleNewQuestion.bind(this)} question={{}} canSave={this.props.currentUser.canAddQuestion} />} />
+                                        <Route path="/Edit/:id" render={(props) => <QuestionEdit {...props} onSave={this.handleUpdateQuestion.bind(this)} canSave={this.props.currentUser.canEditQuestion} />} />
                                         <Route path="/Category/:cat/:sub/:third" component={Category} />
                                         <Route path="/Category/:cat/:sub" component={Category} />} />} />
                                         <Route path="/Category/:cat" component={Category}  />

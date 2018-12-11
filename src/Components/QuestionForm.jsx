@@ -1,4 +1,6 @@
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
+//import { bindActionCreators } from "redux";
 import { Button, Modal, ModalHeader, ModalBody } from 'reactstrap';
 import Remarkable from 'remarkable';
 import RemarkableReactRenderer from 'remarkable-react';
@@ -207,4 +209,12 @@ class QuestionForm extends Component {
     }
 }
 
-export default QuestionForm;
+function mapStateToProps(state, ownProps) {
+    //const canEdit = state.currentUser.canEditQuestion;
+    //const canAdd = state.currentUser.canAddQuestion;
+    const categories = state.categories.categories;
+    const question = state.answers.filter(q => q.id === ownProps.match.params.id)[0];
+    return { categories, question };
+}
+
+export default connect(mapStateToProps)(QuestionForm);
