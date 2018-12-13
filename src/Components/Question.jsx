@@ -13,7 +13,7 @@ class Question extends Component {
     //}
 
     componentDidMount() {
-        console.log(this.props.question);
+        //console.log(this.props.question);
         //fetch("http://localhost:60824/api/Questions/" + this.props.match.params.id, { credentials: "include" })
         //    .then(function (response) {
         //        return response.json();

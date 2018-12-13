@@ -30,6 +30,17 @@ export default function (state = initialState, action) {
             const now = new Date();
             return [...state.filter(q => q.id !== action.payload.id), { ...action.payload, fetched: now }];
 
+        case UPDATE_ANSWER:
+            let updatedQuestion = { ...state.filter(q => q.id === action.payload.id)[0] };
+            updatedQuestion.title = action.payload.title;
+            updatedQuestion.keyWords = action.payload.keyWords;
+            updatedQuestion.categories = action.payload.categories;
+            updatedQuestion.answer = action.payload.answer;
+            return [...state.filter(q => q.id !== action.payload.id), updatedQuestion];
+
+        case CREATE_QUESTION:
+            return [...state, action.payload];
+
         case FEEDBACK_USEFUL:
             let question = state.filter(q => q.id === action.payload.id)[0];
             question.score = question.score - question.helpful + action.payload.isHelpful;

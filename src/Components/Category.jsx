@@ -44,7 +44,7 @@ class Category extends Component {
 
     updateData(data) {
         //console.log(data);
-        this.setState({ questions: data });
+        this.setState({ questions: data.questions });
     }
 
     handleDelete() {

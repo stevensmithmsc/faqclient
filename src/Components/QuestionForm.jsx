@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-//import { bindActionCreators } from "redux";
+import { bindActionCreators } from "redux";
+import { getAnswer, updateAnswer, createQuestion } from '../actions';
+import pacman from '../Images/pacman.gif';
 import { Button, Modal, ModalHeader, ModalBody } from 'reactstrap';
 import Remarkable from 'remarkable';
 import RemarkableReactRenderer from 'remarkable-react';
@@ -9,27 +11,47 @@ class QuestionForm extends Component {
     constructor(props) {
         super(props);
         if (this.props.match.params.id) {
-            //console.log(this.props.question);
-            this.state = { title: "Fetching Data", keyWords: [], answer: "Please Wait...", id: this.props.match.params.id, categories: [], modal: false};
+            console.log(this.props.question);
+            if (this.props.question) {
+                const q = this.props.question;
+                this.state = { title: q.title, keyWords: q.keyWords, answer: q.answer, id: q.id, categories: q.categories, modal: false };
+            } else {
+                this.state = { title: "Fetching Data", keyWords: [], answer: "Please Wait...", id: this.props.match.params.id, categories: [], modal: false, fetching: true};
+            }            
         } else {
-            this.state = { title: "", keyWords: [], answer: "", categories: [], modal: false};
+            this.state = { title: "", keyWords: [], answer: "", categories: this.props.currentCats, modal: false};
         }        
     }
 
     componentDidMount() {
         if (this.props.match.params.id) {
-            fetch("http://localhost:60824/api/Questions/" + this.props.match.params.id, { credentials: "include" })
-                .then(function (response) {
-                    return response.json();
-                })
-                .then(data => this.updateQuestion(data));
+            //fetch("http://localhost:60824/api/Questions/" + this.props.match.params.id, { credentials: "include" })
+            //    .then(function (response) {
+            //        return response.json();
+            //    })
+            //    .then(data => this.updateQuestion(data));
+            const now = new Date();
+
+            if (!this.props.question || !this.props.question.fetched || now - this.props.question.fetched > 300000) {
+                this.setState({ fetching: true });
+                this.props.getAnswer(this.props.match.params.id);
+            }
         }       
     }
 
-    updateQuestion(data) {
-        console.log(data);
-        this.setState({ title: data.title, keyWords: data.keyWords, answer: data.answer, categories: data.categories });
+    componentWillReceiveProps(nextProps) {
+        if (this.props.match.params.id) {
+            if ((!this.props.question && nextProps.question.fetched) || this.props.question.fetched !== nextProps.question.fetched) {
+                const q = nextProps.question;
+                this.setState({ title: q.title, keyWords: q.keyWords, answer: q.answer, categories: q.categories, fetching: false });
+            }
+        }
     }
+
+    //updateQuestion(data) {
+    //    console.log(data);
+    //    this.setState({ title: data.title, keyWords: data.keyWords, answer: data.answer, categories: data.categories });
+    //}
 
     handleChange(event) {
         var newObj = {};
@@ -46,54 +68,57 @@ class QuestionForm extends Component {
     handleSave() {
         if (this.state.title) {
             if (this.props.match.params.id) {
-                fetch("http://localhost:60824/api/Questions/" + this.props.match.params.id, {
-                    method: "PATCH",
-                    headers: {
-                        "Content-Type": "application/json; charset=utf-8"
-                    },
-                    credentials: "include",
-                    body: JSON.stringify(this.state)
-                })
-                    .then((response) => this.processEditResponce(response));
-
+                //fetch("http://localhost:60824/api/Questions/" + this.props.match.params.id, {
+                //    method: "PATCH",
+                //    headers: {
+                //        "Content-Type": "application/json; charset=utf-8"
+                //    },
+                //    credentials: "include",
+                //    body: JSON.stringify(this.state)
+                //})
+                //    .then((response) => this.processEditResponce(response));
+                this.props.updateAnswer(this.state);
+                this.props.history.push("/Question/" + this.state.id);
             } else {
-                fetch("http://localhost:60824/api/Questions/", {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json; charset=utf-8"
-                    },
-                    credentials: "include",
-                    body: JSON.stringify(this.state)
-                })
-                    .then((response) => this.processNewResponce(response));
+                //fetch("http://localhost:60824/api/Questions/", {
+                //    method: "POST",
+                //    headers: {
+                //        "Content-Type": "application/json; charset=utf-8"
+                //    },
+                //    credentials: "include",
+                //    body: JSON.stringify(this.state)
+                //})
+                //    .then((response) => this.processNewResponce(response));
+                this.props.createQuestion(this.state);
+                this.props.history.push("/LastCreated");
             }
         }
     }
 
-    processEditResponce(responce) {
-        console.log(responce);
-        if (responce.ok) {
-            this.saveSuccessful();
-        }
-    }
+    //processEditResponce(responce) {
+    //    console.log(responce);
+    //    if (responce.ok) {
+    //        this.saveSuccessful();
+    //    }
+    //}
 
-    processNewResponce(responce) {
-        console.log(responce);
-        if (responce.ok) {
-            responce.json().then(data => this.updateId(data));
-        }       
-    }
+    //processNewResponce(responce) {
+    //    console.log(responce);
+    //    if (responce.ok) {
+    //        responce.json().then(data => this.updateId(data));
+    //    }       
+    //}
 
-    updateId(data){
-        console.log(data);
-        this.setState({ id: data.id });
-        this.saveSuccessful();
-    }
+    //updateId(data){
+    //    console.log(data);
+    //    this.setState({ id: data.id });
+    //    this.saveSuccessful();
+    //}
 
-    saveSuccessful() {
-        this.props.onSave(this.state);
-        this.props.history.push("/Question/" + this.state.id);
-    }
+    //saveSuccessful() {
+    //    this.props.onSave(this.state);
+    //    this.props.history.push("/Question/" + this.state.id);
+    //}
 
 
     handleChangeSelection(e) {
@@ -132,13 +157,15 @@ class QuestionForm extends Component {
 
     reset() {
         if (this.props.match.params.id) {
-            fetch("http://localhost:60824/api/Questions/" + this.props.match.params.id, { credentials: "include" })
-                .then(function (response) {
-                    return response.json();
-                })
-                .then(data => this.updateQuestion(data));
+            //fetch("http://localhost:60824/api/Questions/" + this.props.match.params.id, { credentials: "include" })
+            //    .then(function (response) {
+            //        return response.json();
+            //    })
+            //    .then(data => this.updateQuestion(data));
+            const q = this.props.question;
+            this.setState({ title: q.title, keyWords: q.keyWords, answer: q.answer, categories: q.categories });
         } else {
-            this.setState({ title: "", keyWords: [], answer: "", categories: [] });
+            this.setState({ title: "", keyWords: [], answer: "", categories: this.props.currentCats });
         }
     }
 
@@ -151,6 +178,7 @@ class QuestionForm extends Component {
         md.renderer = new RemarkableReactRenderer();
         return (
             <div>
+                {this.state.fetching ? <img src={pacman} className="float-right" alt="loading..." height="50" width="50" /> : ""}
                 <h2>{this.props.match.params.id ? "Edit" : "New"} Question</h2>
                 <hr />
                 <div className="form-group">
@@ -210,11 +238,15 @@ class QuestionForm extends Component {
 }
 
 function mapStateToProps(state, ownProps) {
-    //const canEdit = state.currentUser.canEditQuestion;
-    //const canAdd = state.currentUser.canAddQuestion;
     const categories = state.categories.categories;
+    const currentCats = state.categories.current;
     const question = state.answers.filter(q => q.id === ownProps.match.params.id)[0];
-    return { categories, question };
+    const canSave = ownProps.match.params.id ? state.currentUser.canEditQuestion : state.currentUser.canAddQuestion;
+    return { categories, currentCats, question, canSave };
 }
 
-export default connect(mapStateToProps)(QuestionForm);
+function mapDispatchToProps(dispatch) {
+    return bindActionCreators({ getAnswer, updateAnswer, createQuestion }, dispatch);
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(QuestionForm);

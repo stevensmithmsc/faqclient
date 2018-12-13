@@ -28,7 +28,7 @@ class Search extends Component {
 
     updateData(data) {
         console.log(data);
-        this.setState({ questions: data });
+        this.setState({ questions: data.questions });
     }
 
     render() {

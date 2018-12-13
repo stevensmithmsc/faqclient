@@ -59,13 +59,59 @@ export function getAnswer(id) {
     };
 }
 
-//export function updateAnswer(id, question) {
+function confirmQuestionUpdate(question) {
+    return {
+        type: UPDATE_ANSWER,
+        payload: question
+    };
+}
 
-//}
+export function updateAnswer(question) {
+    return function (dispatch) {
+        fetch(api_root + "/Questions/" + question.id, {
+            method: "PATCH",
+            headers: {
+                "Content-Type": "application/json; charset=utf-8"
+            },
+            credentials: "include",
+            body: JSON.stringify(question)
+        })
+            .then(
+                response => console.log('Response', response.json()),
+                error => console.log('An error occurred', error)
+            )
+            .then(() =>
+                dispatch(confirmQuestionUpdate(question))
+            );
+    };
+}
 
-//export function createQuestion(question) {
+function confirmNewQuestion(question) {
+    return {
+        type: CREATE_QUESTION,
+        payload: question
+    };
+}
 
-//}
+export function createQuestion(question) {
+    return function (dispatch) {
+        fetch(api_root + "/Questions/", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json; charset=utf-8"
+            },
+            credentials: "include",
+            body: JSON.stringify(question)
+        })
+            .then(
+                response => response.json(),
+                error => console.log('An error occurred', error)
+            )
+            .then(json =>
+                dispatch(confirmNewQuestion(json))
+            );
+    };
+}
 
 function confirmUsefulness(id, isHelpful) {
     return {

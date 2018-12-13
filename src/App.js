@@ -18,6 +18,7 @@ import FullList from './Components/FullList';
 import NewCat from './Components/NewCat';
 import HomeEdit from './Components/HomeEdit';
 import People from './Components/People';
+import LastCreated from './Components/LastCreated';
 import { get_currentUser, get_cats } from './actions';
 
 
@@ -81,7 +82,7 @@ class App extends Component {
 
     updateData(data) {
         
-        this.setState({ questions: data });
+        this.setState({ questions: data.questions });
     }
 
     //updateCats(data) {
@@ -94,20 +95,20 @@ class App extends Component {
     //    this.setState({ user: data });
     //}
 
-    handleNewQuestion(question) {
-        let Questions = this.state.questions;
-        Questions.push(question);
-        this.setState({ questions: Questions });
-    }
+    //handleNewQuestion(question) {
+    //    let Questions = this.state.questions;
+    //    Questions.push(question);
+    //    this.setState({ questions: Questions });
+    //}
 
-    handleUpdateQuestion(question) {
-        let Questions = this.state.questions;
-        let index = Questions.findIndex((q => q.id === question.id));
-        Questions[index].title = question.title;
-        Questions[index].keyWords = question.keyWords;
-        Questions[index].answer = question.answer;
-        this.setState({ questions: Questions });
-    }
+    //handleUpdateQuestion(question) {
+    //    let Questions = this.state.questions;
+    //    let index = Questions.findIndex((q => q.id === question.id));
+    //    Questions[index].title = question.title;
+    //    Questions[index].keyWords = question.keyWords;
+    //    Questions[index].answer = question.answer;
+    //    this.setState({ questions: Questions });
+    //}
 
     //toggleCat(id) {
         //let newcats = this.state.categories;
@@ -143,8 +144,9 @@ class App extends Component {
                                     <Switch>
                                         <Route exact path="/" component={Home} />
                                         <Route path="/Question/:id" component={Question} />
-                                        <Route path="/NewQuestion" render={(props) => <QuestionForm {...props} onSave={this.handleNewQuestion.bind(this)} question={{}} canSave={this.props.currentUser.canAddQuestion} />} />
-                                        <Route path="/Edit/:id" render={(props) => <QuestionEdit {...props} onSave={this.handleUpdateQuestion.bind(this)} canSave={this.props.currentUser.canEditQuestion} />} />
+                                        <Route path="/NewQuestion" render={(props) => <QuestionForm {...props} question={{}} />} />
+                                        <Route path="/LastCreated" render={() => <LastCreated /> } />
+                                        <Route path="/Edit/:id" component={QuestionEdit} />
                                         <Route path="/Category/:cat/:sub/:third" component={Category} />
                                         <Route path="/Category/:cat/:sub" component={Category} />} />} />
                                         <Route path="/Category/:cat" component={Category}  />
@@ -169,8 +171,7 @@ class App extends Component {
 
 function mapStateToProps(state) {
     const currentUser = state.currentUser;
-    const categories = state.categories.categories;
-    return { currentUser, categories };
+    return { currentUser };
 }
 
 function mapDispatchToProps(dispatch) {
