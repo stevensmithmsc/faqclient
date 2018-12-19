@@ -5,7 +5,6 @@ import { bindActionCreators } from "redux";
 import Helmet from 'react-helmet';
 import SidebarItem from './SidebarItem';
 import { toggle_cats } from '../actions';
-import pacman from '../Images/pacman.gif';
 
 function Sidebar(props) {
     //const selected = [];
@@ -31,7 +30,7 @@ function Sidebar(props) {
                     })
                     .map(c => <SidebarItem key={c.id} item={c} toggle={props.toggle_cats} path="/Category" />)}
             </ul>
-            {props.loading ? <img src={pacman} alt="loading..." height="150" width="150" /> : ""}
+            {props.loading ? <img src={process.env.PUBLIC_URL + "/Images/pacman.gif"} alt="loading..." height="150" width="150" /> : ""}
             <br />
             {(props.canAdd && props.selected.length < 3)  ? <NavLink to={"/NewCat/" + props.selected.join("/")} className="btn btn-primary">New Category</NavLink> : ""}
 

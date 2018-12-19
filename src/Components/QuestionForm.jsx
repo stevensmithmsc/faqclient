@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from "redux";
 import { getAnswer, updateAnswer, createQuestion } from '../actions';
-import pacman from '../Images/pacman.gif';
 import { Button, Modal, ModalHeader, ModalBody } from 'reactstrap';
 import Remarkable from 'remarkable';
 import RemarkableReactRenderer from 'remarkable-react';
@@ -178,7 +177,7 @@ class QuestionForm extends Component {
         md.renderer = new RemarkableReactRenderer();
         return (
             <div>
-                {this.state.fetching ? <img src={pacman} className="float-right" alt="loading..." height="50" width="50" /> : ""}
+                {this.state.fetching ? <img src={process.env.PUBLIC_URL + "/Images/pacman.gif"} className="float-right" alt="loading..." height="50" width="50" /> : ""}
                 <h2>{this.props.match.params.id ? "Edit" : "New"} Question</h2>
                 <hr />
                 <div className="form-group">

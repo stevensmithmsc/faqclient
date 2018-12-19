@@ -5,7 +5,6 @@ import Remarkable from 'remarkable';
 import RemarkableReactRenderer from 'remarkable-react';
 import { Button, Modal, ModalHeader, ModalBody } from 'reactstrap';
 import { get_homepage, update_homepage } from '../actions';
-import pacman from '../Images/pacman.gif';
 
 class HomeEdit extends Component {
     constructor(props) {
@@ -63,7 +62,7 @@ class HomeEdit extends Component {
         if (this.props.home.loading) {
             return (
                 <div>
-                    {this.props.home.loading ? <img src={pacman} className="float-right" alt="loading..." height="50" width="50" /> : ""}
+                    {this.props.home.loading ? <img src={process.env.PUBLIC_URL + "/Images/pacman.gif"} className="float-right" alt="loading..." height="50" width="50" /> : ""}
                     <h1>Loading...</h1>
                 </div>
                 );

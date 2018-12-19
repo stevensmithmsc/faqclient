@@ -10,7 +10,7 @@ import Home from './Components/Home';
 import Question from './Components/Question';
 import Category from './Components/Category';
 import Footer from './Components/Footer';
-import DataContext from './DataContext';
+//import DataContext from './DataContext';
 import QuestionForm from './Components/QuestionForm';
 import QuestionEdit from './Components/QuestionEdit';
 import Search from './Components/Search';
@@ -23,34 +23,6 @@ import { get_currentUser, get_cats } from './actions';
 
 
 class App extends Component {
-    constructor(props) {
-        super(props);
-        this.state = {
-            questions: [
-                {
-                    id: 1,
-                    title: "What Happens if I Ask a Stupid Question?",
-                    categories: ["CIS", "General"],
-                    keyWords: ["Stupid", "Ask"],
-                    answer: "If you ask a stupid question you get a stupid answer."
-                },
-                {
-                    id: 2,
-                    title: "How do I create a new Question?",
-                    categories: ["CIS", "FAQ App", "New Question"],
-                    keyWords: ["Question", "Ask", "Stupid"],
-                    answer: "Press the new button, enter the details and press save."
-                },
-                {
-                    id: 3,
-                    title: "How do I search for Questions?",
-                    categories: ["CIS", "FAQ App", "Search"],
-                    keyWords: ["Search", "Stupid"],
-                    answer: "Press the search button."
-                }
-            ]
-        };
-    }
 
     componentDidMount() {
         //fetch("http://localhost:60824/api/User", { credentials: "include" })
@@ -65,11 +37,11 @@ class App extends Component {
         //    })
         //    .then(data => this.updateCats(data));
         this.props.get_cats();
-        fetch("http://localhost:60824/api/Questions")
-            .then(function (response) {
-                return response.json();
-            })
-            .then(data => this.updateData(data));
+        //fetch("http://localhost:60824/api/Questions")
+        //    .then(function (response) {
+        //        return response.json();
+        //    })
+        //    .then(data => this.updateData(data));
     }
 
     //refreshCats() {
@@ -80,10 +52,10 @@ class App extends Component {
     //        .then(data => this.updateCats(data));
     //}
 
-    updateData(data) {
+    //updateData(data) {
         
-        this.setState({ questions: data.questions });
-    }
+    //    this.setState({ questions: data.questions });
+    //}
 
     //updateCats(data) {
     //    //console.log(data);
@@ -130,40 +102,38 @@ class App extends Component {
     render() {
         return (
             <Router basename="/">
-                <DataContext.Provider value={this.state.questions}>
-                    <div className="App">
-                        <Header canAddQuestion={this.props.currentUser.canAddQuestion}/>
-                        <Map/>
-                        <div className="container-fluid main">
-                            <div className="row">
-                                <div className="col-md-2 col-sm-3">
-                                    <Sidebar />
-                                    {this.props.currentUser.canDoUserAdmin ? <NavLink className="btn btn-warning float-bottom mt-1" to="/UserAdmin" >User Admin</NavLink> : ""}
-                                </div>
-                                <div className="col-md-10 col-sm-9 mainContent">
-                                    <Switch>
-                                        <Route exact path="/" component={Home} />
-                                        <Route path="/Question/:id" component={Question} />
-                                        <Route path="/NewQuestion" render={(props) => <QuestionForm {...props} question={{}} />} />
-                                        <Route path="/LastCreated" render={() => <LastCreated /> } />
-                                        <Route path="/Edit/:id" component={QuestionEdit} />
-                                        <Route path="/Category/:cat/:sub/:third" component={Category} />
-                                        <Route path="/Category/:cat/:sub" component={Category} />} />} />
-                                        <Route path="/Category/:cat" component={Category}  />
-                                        <Route path="/Search/:keyword" component={Search} />
-                                        <Route path="/All" component={FullList} />
-                                        <Route path="/NewCat" component={NewCat} />
-                                        <Route path="/EditHome" component={HomeEdit} />
-                                        <Route path="/UserAdmin" component={People} />
-                                        <Route render={() => <p>Not Found</p>} />
-                                    </Switch>
-                                </div>
+                <div className="App">
+                    <Header canAddQuestion={this.props.currentUser.canAddQuestion}/>
+                    <Map/>
+                    <div className="container-fluid main">
+                        <div className="row">
+                            <div className="col-md-2 col-sm-3">
+                                <Sidebar />
+                                {this.props.currentUser.canDoUserAdmin ? <NavLink className="btn btn-warning float-bottom mt-1" to="/UserAdmin" >User Admin</NavLink> : ""}
+                            </div>
+                            <div className="col-md-10 col-sm-9 mainContent">
+                                <Switch>
+                                    <Route exact path="/" component={Home} />
+                                    <Route path="/Question/:id" component={Question} />
+                                    <Route path="/NewQuestion" render={(props) => <QuestionForm {...props} question={{}} />} />
+                                    <Route path="/LastCreated" render={() => <LastCreated /> } />
+                                    <Route path="/Edit/:id" component={QuestionEdit} />
+                                    <Route path="/Category/:cat/:sub/:third" component={Category} />
+                                    <Route path="/Category/:cat/:sub" component={Category} />} />} />
+                                    <Route path="/Category/:cat" component={Category}  />
+                                    <Route path="/Search/:keyword" component={Search} />
+                                    <Route path="/All" component={FullList} />
+                                    <Route path="/NewCat" component={NewCat} />
+                                    <Route path="/EditHome" component={HomeEdit} />
+                                    <Route path="/UserAdmin" component={People} />
+                                    <Route render={() => <p>Not Found</p>} />
+                                </Switch>
                             </div>
                         </div>
-                        <br />
-                        <Footer username={this.props.currentUser.name} />
                     </div>
-                </DataContext.Provider>
+                    <br />
+                    <Footer username={this.props.currentUser.name} />
+                </div>
             </Router>
         );
     }

@@ -3,8 +3,7 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from "redux";
 import QuestionDetails from './QuestionDetails';
 import { Link } from 'react-router-dom';
-import { getAnswer } from '../actions';
-import pacman from '../Images/pacman.gif';
+import { getAnswer, deleteQuestion } from '../actions';
 
 class Question extends Component {
     //constructor(props) {
@@ -31,14 +30,27 @@ class Question extends Component {
     //    this.setState({ question: data, recieved: true });
     //}
 
+    handleDelete() {
+        //eslint-disable-next-line
+        if (confirm("Are you sure you want to delete this question?")) {
+            console.log("Delete", this.props.question);
+            this.props.deleteQuestion(this.props.question);
+            //fetch("http://localhost:60824/api/Category/" + categoryId, {
+            //    method: "DELETE",
+            //    credentials: "include"
+            //}).then((response) => this.processDelete(response));
+            this.props.history.push("/");
+        }
+    }
+
     render() {
         return (
             <div>
-                {this.props.canDelete ? <button className="btn btn-danger float-right disabled">Delete</button> : ""}
+                {this.props.canDelete ? <button className="btn btn-danger float-right" onClick={() => this.handleDelete()}>Delete</button> : ""}
                 {this.props.canEdit ? <Link className="btn btn-primary float-right" to={`/Edit/${this.props.match.params.id}`}>Edit</Link> : ""}
                 {this.props.question ?
                     <QuestionDetails question={this.props.question} canEdit={this.props.canEdit} />
-                    : <img src={pacman} alt="loading..." />}
+                    : <img src={process.env.PUBLIC_URL + "/Images/pacman.gif"} alt="loading..." />}
             </div>
             );
     }
@@ -52,7 +64,7 @@ function mapStateToProps(state, ownProps) {
 }
 
 function mapDispatchToProps(dispatch) {
-    return bindActionCreators({ getAnswer }, dispatch);
+    return bindActionCreators({ getAnswer, deleteQuestion }, dispatch);
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(Question);

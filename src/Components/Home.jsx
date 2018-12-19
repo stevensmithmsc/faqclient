@@ -5,7 +5,6 @@ import Remarkable from 'remarkable';
 import RemarkableReactRenderer from 'remarkable-react';
 import { Link } from 'react-router-dom';
 import { get_homepage, current_cat } from '../actions';
-import pacman from '../Images/pacman.gif';
 
 class Home extends Component {
     
@@ -24,7 +23,7 @@ class Home extends Component {
         return (
             <div>
                 {this.props.canEdit ? <p className="float-right"><Link to="/EditHome">Edit</Link></p> : ""}
-                {this.props.home.loading ? <img src={pacman} className="float-right" alt="loading..." height="50" width="50" /> : ""}
+                {this.props.home.loading ? <img src={process.env.PUBLIC_URL + "/Images/pacman.gif"} className="float-right" alt="loading..." height="50" width="50" /> : ""}
                 <h1>{this.props.home.greeting}</h1>
                 <hr />
                 <div>{md.render(this.props.home.description)}</div>

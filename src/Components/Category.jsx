@@ -3,12 +3,13 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from "redux";
 import { Button } from 'reactstrap';
 import QuestionList from './QuestionList';
-import { delete_cat, current_cat } from '../actions';
+import { delete_cat, current_cat, update_searchstring } from '../actions';
+import Paginator from './Paginator';
 
 class Category extends Component {
     constructor(props) {
         super(props);
-        this.state = { questions: [] };
+        this.state = { page: 1 };
     }
 
     componentDidMount() {
@@ -24,22 +25,23 @@ class Category extends Component {
     }
 
     getQuestions() {
-        var catSearch = "";
+        var catSearch = [];
         if (this.props.match.params.third) {
-            catSearch = this.props.match.params.cat + ',' + this.props.match.params.sub + ',' + this.props.match.params.third;
+            catSearch = [this.props.match.params.cat, this.props.match.params.sub, this.props.match.params.third];
         }
         else if (this.props.match.params.sub) {
-            catSearch = this.props.match.params.cat + ',' + this.props.match.params.sub;
+            catSearch = [this.props.match.params.cat, this.props.match.params.sub];
         }
         else {
-            catSearch = this.props.match.params.cat;
+            catSearch = [this.props.match.params.cat];
         }
-        fetch("http://localhost:60824/api/Questions?cats=" + catSearch)
-            .then(function (response) {
-                return response.json();
-            })
-            .then(data => this.updateData(data));
-        this.props.current_cat(catSearch.split(','));
+        this.props.update_searchstring(catSearch, null);
+        //fetch("http://localhost:60824/api/Questions?cats=" + catSearch.join(","))
+        //    .then(function (response) {
+        //        return response.json();
+        //    })
+        //    .then(data => this.updateData(data));
+        this.props.current_cat(catSearch);
     }
 
     updateData(data) {
@@ -89,15 +91,23 @@ class Category extends Component {
     //    }
     //}
 
+    setPage(p) {
+        this.setState({ page: p });
+    }
+
     render() {
         const lastCat = this.props.match.params.third ? this.props.match.params.third : this.props.match.params.sub ? this.props.match.params.sub : this.props.match.params.cat;
         const catType = this.props.match.params.third ? "Subcategory" : this.props.match.params.sub ? "Category" : "System";
         return (
             <div>
+                {this.props.fetching ? <img src={process.env.PUBLIC_URL + "/Images/pacman.gif"} className="float-right" alt="loading..." height="50" width="50" /> : ""}
                 <h2>{catType}: {lastCat}</h2>
+                {this.props.searchString !== "" ?
+                <QuestionList page={this.state.page} /> : "Loading..."}
+                {this.props.totalPages > 1 ?
+                <Paginator current={this.state.page} maxPage={this.props.totalPages} goToPage={this.setPage.bind(this)} /> : ""}
 
-                <QuestionList questions={this.state.questions} />
-                {this.state.questions.length === 0 && this.props.canDelete ? <Button onClick={() => this.handleDelete()} color="danger">Delete This Category</Button> : "" }               
+                {this.props.totalQs === 0 && this.props.canDelete ? <Button onClick={() => this.handleDelete()} color="danger">Delete This Category</Button> : "" }               
             </div>
             );
     }
@@ -106,11 +116,15 @@ class Category extends Component {
 function mapStateToProps(state) {
     const categories = state.categories.categories;
     const canDelete = state.currentUser.canDeleteCategory;
-    return { cats: categories, canDelete };
+    const fetching = state.questions.fetching;
+    const totalQs = state.questions.totalQs;
+    const totalPages = state.questions.totalPages;
+    const searchString = state.questions.searchString;
+    return { cats: categories, canDelete, fetching, totalQs, totalPages, searchString };
 }
 
 function mapDispatchToProps(dispatch) {
-    return bindActionCreators({ delete_cat, current_cat }, dispatch);
+    return bindActionCreators({ delete_cat, current_cat, update_searchstring }, dispatch);
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(Category);

@@ -2,7 +2,6 @@ import React from 'react';
 import { connect } from 'react-redux';
 import QuestionDetails from './QuestionDetails';
 import { Link } from 'react-router-dom';
-import pacman from '../Images/pacman.gif';
 
 function LastCreated(props) {
     if (props.question) {
@@ -14,7 +13,7 @@ function LastCreated(props) {
         );
     } else {
         return (
-            <img src={pacman} alt="loading..." />
+            <img src={process.env.PUBLIC_URL + "/Images/pacman.gif"} alt="loading..." />
             );
     }   
 }

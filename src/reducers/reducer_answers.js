@@ -1,4 +1,4 @@
-import { GET_ANSWER, UPDATE_ANSWER, CREATE_QUESTION, FEEDBACK_USEFUL, FEEDBACK_COMMENT } from '../actions';
+import { GET_ANSWER, UPDATE_ANSWER, CREATE_QUESTION, FEEDBACK_USEFUL, FEEDBACK_COMMENT, DELETE_QUESTION } from '../actions';
 
 const initialState = [
     {
@@ -40,6 +40,9 @@ export default function (state = initialState, action) {
 
         case CREATE_QUESTION:
             return [...state, action.payload];
+
+        case DELETE_QUESTION:
+            return [...state.filter(q => q.id !== action.payload)];
 
         case FEEDBACK_USEFUL:
             let question = state.filter(q => q.id === action.payload.id)[0];

@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import { NavLink } from 'react-router-dom';
 import { InputGroup, InputGroupAddon, Input, Button } from 'reactstrap';
-import logo from '../logo.svg';
 
 
 class Header extends Component {
@@ -23,7 +22,7 @@ class Header extends Component {
                 <div className="container-fluid">
                     <div className="row">
                         <div className="col-sm-3">
-                            <img src={logo} className="App-logo float-left" alt="logo" />
+                            <img src={process.env.PUBLIC_URL + "Images/logo.svg"} className="App-logo float-left" alt="logo" />
                             {showSearchBtn ? <Button className="btn btn-outline-light btn-lg float-left header-button" onClick={() => this.setState({ showSearch: !(this.state.showSearch) })}>Search</Button> : ""}
                         </div>
                         <div className="col-sm-6">

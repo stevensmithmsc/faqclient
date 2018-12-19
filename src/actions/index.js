@@ -1,11 +1,11 @@
 
-
-//export const GET_ALL_Qs = 'get_all_qs';
-//export const GET_CATEGORY_Qs = 'get_category_questions';
-//export const SEARCH_KEYWORD = 'search_keyword';
+export const REQUESTING_QUESTIONS = 'requestingQuestions';
+export const SET_SEARCHSTRING = 'setSearchString';
+export const RECIEVED_PAGE = 'receivedPageOfQuestions';
 export const GET_ANSWER = 'get_answer';
 export const UPDATE_ANSWER = 'update_answer';
 export const CREATE_QUESTION = 'create_question';
+export const DELETE_QUESTION = 'delete_question';
 export const FEEDBACK_USEFUL = 'set_useful_feedback';
 export const FEEDBACK_COMMENT = 'set_feedback_comment';
 export const GET_FEEDBACK = 'get_feedback';
@@ -27,17 +27,73 @@ export const SET_CURRENT_CATEGORY = 'set_current_category';
 
 const api_root = process.env.REACT_APP_API;
 
-//export function getAllQs() {
+function request_questions() {
+    return {
+        type: REQUESTING_QUESTIONS
+    };
+}
 
-//}
+function return_questions(json) {
+    return {
+        type: RECIEVED_PAGE,
+        payload: json
+    };
+}
 
-//export function getCategory(category) {
+export function update_searchstring(cats, keyword) {
+    return {
+        type: SET_SEARCHSTRING,
+        payload: { cats, keyword }
+    };
+}
 
-//}
+export function get_page(pageNum, searchString = "") {
+    return function (dispatch) {
+        dispatch(request_questions());
+        console.log("Search String:", searchString);
+        let queryTerms = searchString.split("&");
+        if (pageNum !== 1) {
+            queryTerms.push("page=" + pageNum);
+        }
+        queryTerms = queryTerms.filter(t => t !== "" && t !== null);
+        console.log("Query Terms:", queryTerms);
+        const queryString = queryTerms.length > 0 ? "?" + queryTerms.join("&") : "";
+        console.log("Query String:", queryString);
+        const url = api_root + '/Questions' + queryString;
+        console.log("Url:", url);
+        return fetch(url)
+            .then(
+                response => response.json(),
+                error => console.log('An error occurred', error)
+            )
+            .then(json =>
+                dispatch(return_questions(json))
+            );
+    };
+}
 
-//export function searchKeyword(keyword) {
+export function get_background_page(pageNum, searchString = "") {
+    return function (dispatch) {
 
-//}
+        let queryTerms = searchString.split("&");
+        if (pageNum !== 1) {
+            queryTerms.push("page=" + pageNum);
+        }
+        queryTerms = queryTerms.filter(t => t !== "" && t !== null);
+
+        const queryString = queryTerms.length > 0 ? "?" + queryTerms.join("&") : "";
+        const url = api_root + '/Questions' + queryString;
+
+        return fetch(url)
+            .then(
+                response => response.json(),
+                error => console.log('An error occurred', error)
+            )
+            .then(json =>
+                dispatch(return_questions(json))
+            );
+    };
+}
 
 function returnAnswer(json) {
     return {
@@ -109,6 +165,29 @@ export function createQuestion(question) {
             )
             .then(json =>
                 dispatch(confirmNewQuestion(json))
+            );
+    };
+}
+
+function confirmQuestionDeletion(question) {
+    return {
+        type: DELETE_QUESTION,
+        payload: question.id
+    };
+}
+
+export function deleteQuestion(question) {
+    return function (dispatch) {
+        fetch(api_root + "/Questions/" + question.id, {
+            method: "DELETE",
+            credentials: "include"
+        })
+            .then(
+                response => console.log('Response', response.json()),
+                error => console.log('An error occurred', error)
+            )
+            .then(() =>
+                dispatch(confirmQuestionDeletion(question))
             );
     };
 }

@@ -3,7 +3,6 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from "redux";
 import { Button, Modal, ModalHeader, ModalBody } from 'reactstrap';
 import { add_user, update_user, get_users } from '../actions';
-import pacman from '../Images/pacman.gif';
 
 class People extends Component {
     constructor(props) {
@@ -106,7 +105,7 @@ class People extends Component {
     render() {
         return (
             <div>
-                {this.props.loading ? <img src={pacman} className="float-right" alt="loading..." height="50" width="50" /> : "" }
+                {this.props.loading ? <img src={process.env.PUBLIC_URL + "/Images/pacman.gif"} className="float-right" alt="loading..." height="50" width="50" /> : "" }
                 <h2>Users</h2>                
                 <hr />
                 {this.props.canDo ? <Button color="primary" className="float-right" onClick={this.newUser.bind(this)}>Add New User</Button> : ""}
