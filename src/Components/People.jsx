@@ -11,7 +11,7 @@ class People extends Component {
         this.state = {
             modal: false, new: false,
             selId: "", selName: "", selEMail: "", selAddQ: false, selEditQ: false, selDelQ: false,
-            selAddCat: false, selDelCat: false, selEditHome: false, selUserAdmin: false
+            selAddCat: false, selDelCat: false, selEditHome: false, selUserAdmin: false, selAddImage: false
         };
 
     }
@@ -34,7 +34,9 @@ class People extends Component {
         this.setState({
             new: false, modal: true, selId: selected.id, selName: selected.name, selEMail: selected.email,
             selAddQ: selected.canAddQuestion, selEditQ: selected.canEditQuestion, selDelQ: selected.canDeleteQuestion,
-            selAddCat: selected.canAddCategory, selDelCat: selected.canDeleteCategory, selEditHome: selected.canEditHomePage, selUserAdmin: selected.canDoUserAdmin });
+            selAddCat: selected.canAddCategory, selDelCat: selected.canDeleteCategory, selEditHome: selected.canEditHomePage,
+            selUserAdmin: selected.canDoUserAdmin, selAddImage: selected.canAddImage
+        });
     }
 
     toggle() {
@@ -59,7 +61,8 @@ class People extends Component {
         this.setState({
             new: true, modal: true, selId: "XPENNINECARE\\", selName: "", selEMail: "",
             selAddQ: false, selEditQ: false, selDelQ: false,
-            selAddCat: false, selDelCat: false, selEditHome: false, selUserAdmin: false
+            selAddCat: false, selDelCat: false, selEditHome: false, selUserAdmin: false,
+            selAddImage: false
         });
     }
 
@@ -67,7 +70,8 @@ class People extends Component {
         let newPerson = {
             id: this.state.selId, name: this.state.selName, email: this.state.selEMail, canAddQuestion: this.state.selAddQ,
             canEditQuestion: this.state.selEditQ, canDeleteQuestion: this.state.selDelQ, canAddCategory: this.state.selAddCat,
-            canDeleteCategory: this.state.selDelCat, canEditHomePage: this.state.selEditHome, canDoUserAdmin: this.state.selUserAdmin
+            canDeleteCategory: this.state.selDelCat, canEditHomePage: this.state.selEditHome, canDoUserAdmin: this.state.selUserAdmin,
+            canAddImage: this.state.selAddImage
         };
         if (this.state.new) {
             this.props.add_user(newPerson);
@@ -158,7 +162,11 @@ class People extends Component {
                         <div className="form-group form-check">
                             <input type="checkbox" className="form-check-input" id="selDelQ" checked={this.state.selDelQ} onChange={this.handleCheckbox.bind(this)} />
                             <label className="form-check-label" htmlFor="selDelQ">Can Delete Questions</label>
-                        </div>                    
+                        </div> 
+                        <div className="form-group form-check">
+                            <input type="checkbox" className="form-check-input" id="selAddImage" checked={this.state.selAddImage} onChange={this.handleCheckbox.bind(this)} />
+                            <label className="form-check-label" htmlFor="selAddImage">Can Upload Images</label>
+                        </div>
                         <div className="form-group form-check">
                             <input type="checkbox" className="form-check-input" id="selAddCat" checked={this.state.selAddCat} onChange={this.handleCheckbox.bind(this)} />
                             <label className="form-check-label" htmlFor="selAddCat">Can Add Categories</label>

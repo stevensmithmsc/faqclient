@@ -5,6 +5,7 @@ import { getAnswer, updateAnswer, createQuestion } from '../actions';
 import { Button, Modal, ModalHeader, ModalBody } from 'reactstrap';
 import Remarkable from 'remarkable';
 import RemarkableReactRenderer from 'remarkable-react';
+import Images from './Images';
 
 class QuestionForm extends Component {
     constructor(props) {
@@ -220,6 +221,7 @@ class QuestionForm extends Component {
                 <div className="float-left">
                     <Button color="primary" onClick={this.toggle.bind(this)} >Preview</Button>
                 </div>
+                <Images />
                 { this.props.canSave ? 
                 <div className="float-right">
                     <Button color="primary" onClick={this.handleSave.bind(this)} >Save</Button>&nbsp;&nbsp;

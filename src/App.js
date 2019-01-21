@@ -19,6 +19,7 @@ import NewCat from './Components/NewCat';
 import HomeEdit from './Components/HomeEdit';
 import People from './Components/People';
 import LastCreated from './Components/LastCreated';
+import ImageTable from './Components/ImageTable';
 import { get_currentUser, get_cats } from './actions';
 
 
@@ -126,6 +127,7 @@ class App extends Component {
                                     <Route path="/NewCat" component={NewCat} />
                                     <Route path="/EditHome" component={HomeEdit} />
                                     <Route path="/UserAdmin" component={People} />
+                                    <Route path="/ImageList" component={ImageTable} />
                                     <Route render={() => <p>Not Found</p>} />
                                 </Switch>
                             </div>

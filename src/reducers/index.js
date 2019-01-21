@@ -6,6 +6,7 @@ import CategoriesReducer from './reducer_categories';
 import AnswersReducer from './reducer_answers';
 import FeedbackReducer from './reducer_feedback';
 import QuestionsReducer from './reducer_questions';
+import ImageReducer from './reducer_images';
 
 const rootReducer = combineReducers({
     users: UsersReducer,
@@ -14,7 +15,8 @@ const rootReducer = combineReducers({
     categories: CategoriesReducer,
     questions: QuestionsReducer,
     answers: AnswersReducer,
-    feedback: FeedbackReducer
+    feedback: FeedbackReducer,
+    images: ImageReducer
 });
 
 export default rootReducer;

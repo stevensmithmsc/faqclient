@@ -24,6 +24,9 @@ export const TOGGLE_CATEGORY = 'toggle_category';
 //export const ADD_CATEGORY = 'add_categry';
 //export const DELETE_CATEGORY = 'delete_category';
 export const SET_CURRENT_CATEGORY = 'set_current_category';
+export const UPLOAD_IMAGE = 'upload_image_success';
+export const UPLOAD_FAILED = 'upload_image_failure';
+export const RECIEVE_IMAGES = 'recieve_image_details';
 
 const api_root = process.env.REACT_APP_API;
 
@@ -514,5 +517,54 @@ export function current_cat(categories) {
     return {
         type: SET_CURRENT_CATEGORY,
         payload: categories
+    };
+}
+
+function uploadSuccess(data) {
+    return {
+        type: UPLOAD_IMAGE,
+        payload: data
+    };
+}
+
+function uploadFail(error) {
+    return {
+        type: UPLOAD_FAILED,
+        payload: error
+    };
+}
+
+export function uploadDocumentRequest(image, caption) {
+    let data = new FormData();
+    data.append('UploadedImage', image, image.name);
+    data.append('Caption', caption);
+
+    return (dispatch) => {
+        fetch(api_root + '/Image', {
+            method: 'POST',
+            body: data
+        }).then(
+            response => response.json(),
+            error => dispatch(uploadFail(error))
+        ).then(json => dispatch(uploadSuccess(json)));
+ 
+    };
+}
+
+function recieveImages(data) {
+    return {
+        type: RECIEVE_IMAGES,
+        payload: data
+    };
+}
+
+export function getImages() {
+    return (dispatch) => {
+        fetch(api_root + '/Image')
+         .then(
+            response => response.json(),
+            error => console.log('An error occurred', error)
+        ).then(json => dispatch(recieveImages(json)));
+
     };
 }

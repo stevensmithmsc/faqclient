@@ -9,7 +9,7 @@ import { toggle_cats } from '../actions';
 function Sidebar(props) {
     //const selected = [];
     let sysStyle = "";
-    if (props.selected !== []) {
+    if (props.cats && props.selected !== []) {
         //selected = props.location.pathname.split("/").slice(2);
         const system = props.cats.find(s => s.categoryName === props.selected[0]);
         if (system) {

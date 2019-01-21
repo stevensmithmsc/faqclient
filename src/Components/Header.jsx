@@ -22,7 +22,7 @@ class Header extends Component {
                 <div className="container-fluid">
                     <div className="row">
                         <div className="col-sm-3">
-                            <img src={process.env.PUBLIC_URL + "Images/logo.svg"} className="App-logo float-left" alt="logo" />
+                            <img src={process.env.PUBLIC_URL + "/Images/logo.svg"} className="App-logo float-left" alt="logo" />
                             {showSearchBtn ? <Button className="btn btn-outline-light btn-lg float-left header-button" onClick={() => this.setState({ showSearch: !(this.state.showSearch) })}>Search</Button> : ""}
                         </div>
                         <div className="col-sm-6">
