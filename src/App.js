@@ -21,6 +21,7 @@ import People from './Components/People';
 import LastCreated from './Components/LastCreated';
 import ImageTable from './Components/ImageTable';
 import { get_currentUser, get_cats } from './actions';
+import Reports from './Components/Reports';
 
 
 class App extends Component {
@@ -111,13 +112,14 @@ class App extends Component {
                             <div className="col-md-2 col-sm-3">
                                 <Sidebar />
                                 {this.props.currentUser.canDoUserAdmin ? <NavLink className="btn btn-warning float-bottom mt-1" to="/UserAdmin" >User Admin</NavLink> : ""}
+                                {this.props.currentUser.canViewReports ? <div><NavLink className="btn btn-secondary float-bottom mt-1" to="/Reports" >Reports</NavLink></div> : ""}
                             </div>
                             <div className="col-md-10 col-sm-9 mainContent">
                                 <Switch>
                                     <Route exact path="/" component={Home} />
                                     <Route path="/Question/:id" component={Question} />
                                     <Route path="/NewQuestion" render={(props) => <QuestionForm {...props} question={{}} />} />
-                                    <Route path="/LastCreated" render={() => <LastCreated /> } />
+                                    <Route path="/LastCreated" render={() => <LastCreated />} />
                                     <Route path="/Edit/:id" component={QuestionEdit} />
                                     <Route path="/Category/:cat/:sub/:third" component={Category} />
                                     <Route path="/Category/:cat/:sub" component={Category} />} />} />
@@ -128,6 +130,7 @@ class App extends Component {
                                     <Route path="/EditHome" component={HomeEdit} />
                                     <Route path="/UserAdmin" component={People} />
                                     <Route path="/ImageList" component={ImageTable} />
+                                    <Route path="/Reports" component={Reports} />
                                     <Route render={() => <p>Not Found</p>} />
                                 </Switch>
                             </div>

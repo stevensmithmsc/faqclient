@@ -27,6 +27,11 @@ export const SET_CURRENT_CATEGORY = 'set_current_category';
 export const UPLOAD_IMAGE = 'upload_image_success';
 export const UPLOAD_FAILED = 'upload_image_failure';
 export const RECIEVE_IMAGES = 'recieve_image_details';
+export const REQUESTING_REPORT_DATA = 'request_report_data';
+export const UPDATE_SYSTEM_REP_DATA = 'update_system_report_data';
+export const UPDATE_CATS_REP_DATA = 'update_categories_report_data';
+export const UPDATE_SYS_AUTH_REP_DATA = 'update_system_and_author_report_data';
+export const UPDATE_AUTH_REP_DATA = 'update_users_report_data';
 
 const api_root = process.env.REACT_APP_API;
 
@@ -340,7 +345,7 @@ function confirm_update(user) {
 export function update_user(user) {
     return function (dispatch) {
         dispatch(request_users());
-
+        console.log(user);
         return fetch(api_root + "/People?id=" + user.id, {
             method: "PUT",
             headers: {
@@ -567,4 +572,72 @@ export function getImages() {
         ).then(json => dispatch(recieveImages(json)));
 
     };
+}
+
+function requestReportData() {
+    return {
+        type: REQUESTING_REPORT_DATA
+    };
+}
+
+function updateSystemReportData(data) {
+    return {
+        type: UPDATE_SYSTEM_REP_DATA,
+        payload: data
+    };
+}
+
+function updateCatReportData(data) {
+    return {
+        type: UPDATE_CATS_REP_DATA,
+        payload: data
+    };
+}
+
+function updateSysAuthReportData(data) {
+    return {
+        type: UPDATE_SYS_AUTH_REP_DATA,
+        payload: data
+    };
+}
+
+function updateAuthReportData(data) {
+    return {
+        type: UPDATE_AUTH_REP_DATA,
+        payload: data
+    };
+}
+
+export function getReportData(repNo) {
+    return (dispatch) => {
+        dispatch(requestReportData());
+        fetch(api_root + "/Report/" + repNo, { credentials: "include" })
+            .then(response => {
+                if (response.ok) {
+                    return response.json();
+                }
+                console.log(response);
+                throw new Error(`${response.status}: ${response.statusText}`);
+            })
+            .then(json => {
+                switch (repNo) {
+                    case 2:
+                        dispatch(updateSystemReportData(json));
+                        break;
+                    case 3:
+                        dispatch(updateCatReportData(json));
+                        break;
+                    case 4:
+                        dispatch(updateSysAuthReportData(json));
+                        break;
+                    case 7:
+                        dispatch(updateAuthReportData(json));
+                        break;
+                    default:
+                        console.log(json);
+                }
+            })
+            .catch(error => console.error(error));
+    };
+    
 }
