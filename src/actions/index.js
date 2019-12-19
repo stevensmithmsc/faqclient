@@ -32,6 +32,7 @@ export const UPDATE_SYSTEM_REP_DATA = 'update_system_report_data';
 export const UPDATE_CATS_REP_DATA = 'update_categories_report_data';
 export const UPDATE_SYS_AUTH_REP_DATA = 'update_system_and_author_report_data';
 export const UPDATE_AUTH_REP_DATA = 'update_users_report_data';
+export const TOGGLE_SEARCH_CATS = 'toggle_search_within_categories';
 
 const api_root = process.env.REACT_APP_API;
 
@@ -640,4 +641,11 @@ export function getReportData(repNo) {
             .catch(error => console.error(error));
     };
     
+}
+
+export function toggleSearchWithinCat(searchCats) {
+    return {
+        type: TOGGLE_SEARCH_CATS,
+        payload: searchCats
+    };
 }

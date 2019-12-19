@@ -12,7 +12,10 @@ class Search extends Component {
     }
 
     componentDidMount() {
-        this.props.update_searchstring(this.props.categories, this.props.match.params.keyword);
+        if (this.props.searchCats)
+            this.props.update_searchstring(this.props.categories, this.props.match.params.keyword);
+        else
+            this.props.update_searchstring(null, this.props.match.params.keyword);
         //fetch("http://localhost:60824/api/Questions?keyWord=" + this.props.match.params.keyword)
         //    .then(function (response) {
         //        return response.json();
@@ -21,13 +24,17 @@ class Search extends Component {
     }
 
     componentDidUpdate(prevProps, prevState) {
-        if (prevProps.match.params.keyword !== this.props.match.params.keyword) {
+        if ((prevProps.match.params.keyword !== this.props.match.params.keyword) ||
+            (prevProps.searchCats !== this.props.searchCats)) {
             //fetch("http://localhost:60824/api/Questions?keyWord=" + this.props.match.params.keyword)
             //    .then(function (response) {
             //        return response.json();
             //    })
             //    .then(data => this.updateData(data));
-            this.props.update_searchstring(this.props.categories, this.props.match.params.keyword);
+            if (this.props.searchCats)
+                this.props.update_searchstring(this.props.categories, this.props.match.params.keyword);
+            else
+                this.props.update_searchstring(null, this.props.match.params.keyword);
         }       
     }
 
@@ -57,10 +64,11 @@ class Search extends Component {
 
 function mapStateToProps(state) {
     const categories = state.categories.current;
+    const searchCats = state.categories.searchCats;
     const fetching = state.questions.fetching;
     const totalPages = state.questions.totalPages;
     const searchString = state.questions.searchString;
-    return { categories, fetching, totalPages, searchString };
+    return { categories, searchCats, fetching, totalPages, searchString };
 }
 
 function mapDispatchToProps(dispatch) {

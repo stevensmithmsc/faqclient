@@ -1,6 +1,9 @@
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
+import { bindActionCreators } from "redux";
+import { toggleSearchWithinCat } from '../actions';
 import { NavLink } from 'react-router-dom';
-import { InputGroup, InputGroupAddon, Input, Button } from 'reactstrap';
+import { InputGroup, InputGroupAddon, Input, Button, FormGroup, Label } from 'reactstrap';
 
 
 class Header extends Component {
@@ -28,6 +31,7 @@ class Header extends Component {
                         <div className="col-sm-6">
                             <h1 className="App-title">Frequently Asked Questions</h1>
                             {this.state.showSearch ?
+                                <div>
                                 <div className="card text-white bg-transparent border-light searchCard mx-auto" >
                                     <InputGroup>
                                         <Input type="text" className="form-control" placeholder="Enter Keyword to Search for" aria-label="Keyword search" aria-describedby="button-addon2" value={this.state.keyWord} id="keyWord" onChange={this.handleChange.bind(this)} />
@@ -35,6 +39,17 @@ class Header extends Component {
                                             <NavLink className="btn btn-outline-success" type="button" id="button-addon2" to={`/Search/${this.state.keyWord}`}>Go</NavLink>
                                         </InputGroupAddon>
                                     </InputGroup>
+                                </div>
+                                    <FormGroup check inline>
+                                        <Label check>
+                                            <Input type="radio" checked={!this.props.searchCats} onChange={() => this.props.toggleSearchWithinCat(false)} /> All Database
+                                        </Label>
+                                    </FormGroup>
+                                    <FormGroup check inline>
+                                        <Label check>
+                                            <Input type="radio" checked={this.props.searchCats} onChange={() => this.props.toggleSearchWithinCat(true)} /> Current Category
+                                        </Label>
+                                    </FormGroup>
                                 </div>
                                 : ""}
                         </div>
@@ -49,4 +64,13 @@ class Header extends Component {
     }
 }
 
-export default Header;
+function mapStateToProps(state) {
+    const searchCats = state.categories.searchCats;
+    return { searchCats };
+}
+
+function mapDispatchToProps(dispatch) {
+    return bindActionCreators({ toggleSearchWithinCat }, dispatch);
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(Header);

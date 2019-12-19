@@ -1,4 +1,4 @@
-import { REQUEST_CATEGORIES, GET_CATEGORIES, TOGGLE_CATEGORY, SET_CURRENT_CATEGORY } from '../actions';
+import { REQUEST_CATEGORIES, GET_CATEGORIES, TOGGLE_CATEGORY, SET_CURRENT_CATEGORY, TOGGLE_SEARCH_CATS } from '../actions';
 
 const initialState = {
     categories: [
@@ -29,7 +29,8 @@ const initialState = {
 
     ],
     current: [],
-    loading: false
+    loading: false,
+    searchCats: false
 };
 
 export default function (state = initialState, action) {
@@ -82,6 +83,9 @@ export default function (state = initialState, action) {
                 
             //console.log(ncats);
             return { ...state, current: action.payload, categories: ncats };
+
+        case TOGGLE_SEARCH_CATS:
+            return { ...state, searchCats: action.payload };
 
         default:
             return state;
